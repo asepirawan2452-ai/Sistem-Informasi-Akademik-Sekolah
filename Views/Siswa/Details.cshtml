@@ -1,0 +1,41 @@
+@model SistemNilaiAkademik.Models.Siswa
+
+@{
+    ViewData["Title"] = "Detail Siswa";
+}
+
+<div class="page-heading">
+    <h1>Detail Siswa</h1>
+    <p>Informasi lengkap data siswa.</p>
+</div>
+
+<div class="card card-sia">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span>@Model.NamaSiswa</span>
+        <span class="badge-sia @(Model.Status == "Aktif" ? string.Empty : "badge-nonaktif")">@Model.Status</span>
+    </div>
+    <div class="card-body">
+        <dl class="row detail-sia mb-0">
+            <dt class="col-sm-3">NIS</dt>
+            <dd class="col-sm-9">@Model.Nis</dd>
+            <dt class="col-sm-3">NISN</dt>
+            <dd class="col-sm-9">@Model.Nisn</dd>
+            <dt class="col-sm-3">Nama Siswa</dt>
+            <dd class="col-sm-9">@Model.NamaSiswa</dd>
+            <dt class="col-sm-3">Jenis Kelamin</dt>
+            <dd class="col-sm-9">@Model.JenisKelamin</dd>
+            <dt class="col-sm-3">Tanggal Lahir</dt>
+            <dd class="col-sm-9">@Model.TanggalLahir.ToString("dd-MM-yyyy")</dd>
+            <dt class="col-sm-3">Alamat</dt>
+            <dd class="col-sm-9">@Model.Alamat</dd>
+            <dt class="col-sm-3">Kelas</dt>
+            <dd class="col-sm-9">@Model.Kelas.NamaKelas</dd>
+            <dt class="col-sm-3">Status</dt>
+            <dd class="col-sm-9">@Model.Status</dd>
+        </dl>
+    </div>
+    <div class="card-footer bg-transparent border-0 d-flex gap-2">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary btn-sm">Ubah</a>
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Kembali</a>
+    </div>
+</div>

@@ -1,0 +1,64 @@
+@model SistemNilaiAkademik.Models.Mapel
+
+@{
+    ViewData["Title"] = "Tambah Mata Pelajaran";
+}
+
+<div class="page-heading">
+    <h1>Tambah Mata Pelajaran</h1>
+    <p>Isi data mata pelajaran baru.</p>
+</div>
+
+<div class="card card-sia">
+    <div class="card-header">Form Mata Pelajaran</div>
+    <div class="card-body">
+        <form asp-action="Create" method="post" class="row g-3">
+            <div asp-validation-summary="ModelOnly" class="text-danger col-12"></div>
+            <div class="col-md-6">
+                <label asp-for="KodeMapel" class="form-label">Kode Mapel</label>
+                <input asp-for="KodeMapel" class="form-control" />
+                <span asp-validation-for="KodeMapel" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="NamaMapel" class="form-label">Nama Mata Pelajaran</label>
+                <input asp-for="NamaMapel" class="form-control" />
+                <span asp-validation-for="NamaMapel" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Kelompok" class="form-label">Kelompok</label>
+                <select asp-for="Kelompok" class="form-select">
+                    <option value="">-- Pilih --</option>
+                    <option value="Umum">Umum</option>
+                    <option value="Kejuruan">Kejuruan</option>
+                </select>
+                <span asp-validation-for="Kelompok" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="IdJurusan" class="form-label">Jurusan</label>
+                <select asp-for="IdJurusan" class="form-select" asp-items="ViewBag.IdJurusan"></select>
+                <span asp-validation-for="IdJurusan" class="text-danger"></span>
+            </div>
+            <div class="col-12">
+                <label asp-for="Deskripsi" class="form-label">Deskripsi</label>
+                <textarea asp-for="Deskripsi" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Deskripsi" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Status" class="form-label">Status</label>
+                <select asp-for="Status" class="form-select">
+                    <option value="Aktif">Aktif</option>
+                    <option value="Nonaktif">Nonaktif</option>
+                </select>
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+            <div class="col-12 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Simpan</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Kembali</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

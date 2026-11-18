@@ -1,0 +1,64 @@
+@model SistemNilaiAkademik.Models.Kelas
+
+@{
+    ViewData["Title"] = "Ubah Kelas";
+}
+
+<div class="page-heading">
+    <h1>Ubah Kelas</h1>
+    <p>Perbarui data kelas dan wali kelas.</p>
+</div>
+
+<div class="card card-sia">
+    <div class="card-header">Form Kelas</div>
+    <div class="card-body">
+        <form asp-action="Edit" method="post" class="row g-3">
+            <div asp-validation-summary="ModelOnly" class="text-danger col-12"></div>
+            <div class="col-md-6">
+                <label asp-for="NamaKelas" class="form-label">Nama Kelas</label>
+                <input asp-for="NamaKelas" class="form-control" />
+                <span asp-validation-for="NamaKelas" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Tingkat" class="form-label">Tingkat</label>
+                <select asp-for="Tingkat" class="form-select">
+                    <option value="">-- Pilih --</option>
+                    <option value="X">X</option>
+                    <option value="XI">XI</option>
+                    <option value="XII">XII</option>
+                </select>
+                <span asp-validation-for="Tingkat" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="IdJurusan" class="form-label">Jurusan</label>
+                <select asp-for="IdJurusan" class="form-select" asp-items="ViewBag.IdJurusan">
+                    <option value="">-- Pilih Jurusan --</option>
+                </select>
+                <span asp-validation-for="IdJurusan" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="IdWaliKelas" class="form-label">Wali Kelas</label>
+                <select asp-for="IdWaliKelas" class="form-select" asp-items="ViewBag.IdWaliKelas">
+                    <option value="">-- Pilih Wali Kelas --</option>
+                </select>
+                <span asp-validation-for="IdWaliKelas" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Status" class="form-label">Status</label>
+                <select asp-for="Status" class="form-select">
+                    <option value="Aktif">Aktif</option>
+                    <option value="Nonaktif">Nonaktif</option>
+                </select>
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+            <div class="col-12 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Kembali</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,28 @@
+@model SistemNilaiAkademik.Models.Jurusan
+
+@{
+    ViewData["Title"] = "Detail Jurusan";
+}
+
+<div class="page-heading">
+    <h1>Detail Jurusan</h1>
+    <p>Informasi lengkap data jurusan.</p>
+</div>
+
+<div class="card card-sia">
+    <div class="card-header">
+        <span class="badge-sia">@Model.Kode</span>
+    </div>
+    <div class="card-body">
+        <dl class="row detail-sia mb-0">
+            <dt class="col-sm-3">Kode</dt>
+            <dd class="col-sm-9">@Model.Kode</dd>
+            <dt class="col-sm-3">Nama Jurusan</dt>
+            <dd class="col-sm-9">@Model.Nama</dd>
+        </dl>
+    </div>
+    <div class="card-footer bg-transparent border-0 d-flex gap-2">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary btn-sm">Ubah</a>
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Kembali</a>
+    </div>
+</div>

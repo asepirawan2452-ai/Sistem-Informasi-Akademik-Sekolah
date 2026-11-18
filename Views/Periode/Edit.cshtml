@@ -1,0 +1,64 @@
+@model SistemNilaiAkademik.Models.PeriodeAkademik
+
+@{
+    ViewData["Title"] = "Ubah Periode Akademik";
+}
+
+<div class="page-heading">
+    <h1>Ubah Periode Akademik</h1>
+    <p>Perbarui data periode akademik sesuai kebutuhan.</p>
+</div>
+
+<div class="card card-sia">
+    <div class="card-header">Form Periode Akademik</div>
+    <div class="card-body">
+        <form asp-action="Edit" method="post" class="row g-3">
+            <div asp-validation-summary="ModelOnly" class="text-danger col-12"></div>
+            <div class="col-md-6">
+                <label asp-for="NamaPeriode" class="form-label">Nama Periode</label>
+                <input asp-for="NamaPeriode" class="form-control" />
+                <span asp-validation-for="NamaPeriode" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="TahunAjaran" class="form-label">Tahun Ajaran</label>
+                <input asp-for="TahunAjaran" class="form-control" />
+                <span asp-validation-for="TahunAjaran" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Semester" class="form-label">Semester</label>
+                <select asp-for="Semester" class="form-select">
+                    <option value="">-- Pilih --</option>
+                    <option value="Ganjil">Ganjil</option>
+                    <option value="Genap">Genap</option>
+                </select>
+                <span asp-validation-for="Semester" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Status" class="form-label">Status</label>
+                <select asp-for="Status" class="form-select">
+                    <option value="Aktif">Aktif</option>
+                    <option value="Nonaktif">Nonaktif</option>
+                </select>
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="TanggalMulai" class="form-label">Tanggal Mulai</label>
+                <input asp-for="TanggalMulai" class="form-control" />
+                <span asp-validation-for="TanggalMulai" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="TanggalSelesai" class="form-label">Tanggal Selesai</label>
+                <input asp-for="TanggalSelesai" class="form-control" />
+                <span asp-validation-for="TanggalSelesai" class="text-danger"></span>
+            </div>
+            <div class="col-12 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Kembali</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

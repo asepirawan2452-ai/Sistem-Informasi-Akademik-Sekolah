@@ -1,0 +1,61 @@
+@model IEnumerable<SistemNilaiAkademik.Models.Siswa>
+
+@{
+    ViewData["Title"] = "Data Siswa";
+}
+
+<div class="page-heading">
+    <h1>Data Siswa</h1>
+    <p>Kelola data siswa aktif dan nonaktif.</p>
+</div>
+
+<div class="card card-sia">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span>Daftar Siswa</span>
+        <a asp-action="Create" class="btn btn-primary btn-sm">+ Tambah Siswa</a>
+    </div>
+    <div class="card-body">
+        @if (!Model.Any())
+        {
+            <p class="text-muted mb-0">Belum ada data siswa.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-sia mb-0">
+                    <thead>
+                        <tr>
+                            <th>NIS</th>
+                            <th>NISN</th>
+                            <th>Nama Siswa</th>
+                            <th>Jenis Kelamin</th>
+                            <th>Tanggal Lahir</th>
+                            <th>Kelas</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Nis</td>
+                                <td>@item.Nisn</td>
+                                <td class="fw-semibold">@item.NamaSiswa</td>
+                                <td>@item.JenisKelamin</td>
+                                <td>@item.TanggalLahir.ToString("dd-MM-yyyy")</td>
+                                <td>@item.Kelas.NamaKelas</td>
+                                <td><span class="badge-sia @(item.Status == "Aktif" ? string.Empty : "badge-nonaktif")">@item.Status</span></td>
+                                <td class="text-nowrap">
+                                    <a class="btn btn-sm btn-outline-primary" asp-action="Details" asp-route-id="@item.Id">Detail</a>
+                                    <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@item.Id">Ubah</a>
+                                    <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id">Nonaktifkan</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

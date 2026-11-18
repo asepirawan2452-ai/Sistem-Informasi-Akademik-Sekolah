@@ -1,0 +1,52 @@
+@model SistemNilaiAkademik.Models.Guru
+
+@{
+    ViewData["Title"] = "Ubah Guru";
+}
+
+<div class="page-heading">
+    <h1>Ubah Guru</h1>
+    <p>Perbarui data guru dan akun pengguna terkait.</p>
+</div>
+
+<div class="card card-sia">
+    <div class="card-header">Form Guru</div>
+    <div class="card-body">
+        <form asp-action="Edit" method="post" class="row g-3">
+            <div asp-validation-summary="ModelOnly" class="text-danger col-12"></div>
+            <div class="col-md-6">
+                <label asp-for="IdPengguna" class="form-label">Akun Pengguna</label>
+                <select asp-for="IdPengguna" class="form-select" asp-items="ViewBag.IdPengguna">
+                    <option value="">-- Pilih Akun --</option>
+                </select>
+                <span asp-validation-for="IdPengguna" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="NipNrg" class="form-label">NIP/NRG</label>
+                <input asp-for="NipNrg" class="form-control" />
+                <span asp-validation-for="NipNrg" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Nama" class="form-label">Nama Guru</label>
+                <input asp-for="Nama" class="form-control" />
+                <span asp-validation-for="Nama" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Status" class="form-label">Status</label>
+                <select asp-for="Status" class="form-select">
+                    <option value="Aktif">Aktif</option>
+                    <option value="Nonaktif">Nonaktif</option>
+                </select>
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+            <div class="col-12 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Kembali</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

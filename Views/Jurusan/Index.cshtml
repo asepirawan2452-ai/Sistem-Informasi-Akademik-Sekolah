@@ -1,0 +1,51 @@
+@model IEnumerable<SistemNilaiAkademik.Models.Jurusan>
+
+@{
+    ViewData["Title"] = "Jurusan";
+}
+
+<div class="page-heading">
+    <h1>Jurusan</h1>
+    <p>Kelola daftar jurusan yang digunakan oleh kelas dan mata pelajaran.</p>
+</div>
+
+<div class="card card-sia">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span>Daftar Jurusan</span>
+        <a asp-action="Create" class="btn btn-primary btn-sm">+ Tambah Jurusan</a>
+    </div>
+    <div class="card-body">
+        @if (!Model.Any())
+        {
+            <p class="text-muted mb-0">Belum ada data jurusan.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-sia mb-0">
+                    <thead>
+                        <tr>
+                            <th>Kode</th>
+                            <th>Nama Jurusan</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td><span class="badge-sia">@item.Kode</span></td>
+                                <td class="fw-semibold">@item.Nama</td>
+                                <td class="text-nowrap">
+                                    <a class="btn btn-sm btn-outline-primary" asp-action="Details" asp-route-id="@item.Id">Detail</a>
+                                    <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@item.Id">Ubah</a>
+                                    <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id">Hapus</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

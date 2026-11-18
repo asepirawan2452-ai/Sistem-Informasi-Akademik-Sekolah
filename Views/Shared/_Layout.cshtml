@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Sistem Informasi Akademik</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/SistemNilaiAkademik.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <a class="brand" asp-area="" asp-controller="Home" asp-action="Index">
+                <span class="brand-mark">SI</span>
+                <span class="brand-text">
+                    <strong>SIAKAD</strong>
+                    <small>Sistem Informasi Akademik</small>
+                </span>
+            </a>
+
+            <nav class="side-nav" aria-label="Navigasi utama">
+                <p class="nav-caption">MENU UTAMA</p>
+                <a class="side-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")"
+                   asp-area="" asp-controller="Home" asp-action="Index">
+                    <span class="nav-dot"></span> Dashboard
+                </a>
+
+                <p class="nav-caption">DATA MASTER</p>
+                <a class="side-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Siswa" ? "active" : "")"
+                   asp-area="" asp-controller="Siswa" asp-action="Index">Data Siswa</a>
+                <a class="side-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Guru" ? "active" : "")"
+                   asp-area="" asp-controller="Guru" asp-action="Index">Data Guru</a>
+                <a class="side-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Mapel" ? "active" : "")"
+                   asp-area="" asp-controller="Mapel" asp-action="Index">Mata Pelajaran</a>
+                <a class="side-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Kelas" ? "active" : "")"
+                   asp-area="" asp-controller="Kelas" asp-action="Index">Data Kelas</a>
+                <a class="side-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Periode" ? "active" : "")"
+                   asp-area="" asp-controller="Periode" asp-action="Index">Periode Akademik</a>
+                <a class="side-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Jurusan" ? "active" : "")"
+                   asp-area="" asp-controller="Jurusan" asp-action="Index">Jurusan</a>
+
+                <p class="nav-caption">TRANSAKSI NILAI</p>
+                <span class="side-link disabled">Input Nilai</span>
+                <span class="side-link disabled">Rekap Nilai</span>
+                <span class="side-link disabled">Grafik Rata-rata</span>
+                <span class="side-link disabled">Cetak Rapor</span>
+            </nav>
+        </aside>
+
+        <div class="workspace">
+            <header class="topbar">
+                <div>
+                    <span class="topbar-label">Halaman</span>
+                    <strong class="topbar-title">@ViewData["Title"]</strong>
+                </div>
+                <div class="topbar-right">
+                    <span class="status-dot"></span>
+                    <span>Tahap 2 - Data Master</span>
+                    <span class="user-chip">Administrator</span>
+                </div>
+            </header>
+
+            <main class="content" role="main">
+                @if (TempData["Success"] is string success)
+                {
+                    <div class="alert alert-success alert-sia alert-dismissible fade show" role="alert">
+                        @success
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Tutup"></button>
+                    </div>
+                }
+                @if (TempData["Error"] is string error)
+                {
+                    <div class="alert alert-danger alert-sia alert-dismissible fade show" role="alert">
+                        @error
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Tutup"></button>
+                    </div>
+                }
+                @RenderBody()
+            </main>
+
+            <footer class="app-footer">
+                &copy; 2026 - Sistem Informasi Nilai Akademik - Kelompok 4
+            </footer>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
