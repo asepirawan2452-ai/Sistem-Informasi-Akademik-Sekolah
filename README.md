@@ -1,5 +1,9 @@
 # Sistem Informasi Nilai Akademik
 
+Kelompok_4
+1.  Muhamad Abdul Rohan 2.  Abdul Walid 3.  Abdul Azis Alfarizy 4.  Asep Irawan 5.  Julio Sandra 6. Fajar Karismawan 
+
+
 Aplikasi ASP.NET Core MVC untuk pengelolaan data akademik, input dan rekap nilai, serta rapor siswa. Migrasi Code First disiapkan untuk SQL Server; konfigurasi Development juga mendukung database MySQL lokal yang sudah digunakan proyek.
 
 ## Struktur proyek
