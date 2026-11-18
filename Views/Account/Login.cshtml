@@ -1,0 +1,69 @@
+@model SistemInformasiNilaiAkademik.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "Masuk ke Sistem";
+    Layout = "_Layout";
+}
+
+<div class="row justify-content-center align-items-center my-4">
+    <div class="col-md-9 col-lg-7 col-xl-5">
+        <div class="nev-card border-0 shadow-lg p-4 p-md-5">
+            <div class="text-center mb-4">
+                <div class="mb-3">
+                    <img class="school-logo-login" src="/images/logo-sekolah.png" alt="Logo SMK Negeri 1 Lestari" />
+                </div>
+                <h3 class="fw-bold" style="color: var(--dark-slate);">SMK Negeri 1 Lestari</h3>
+                <div class="text-muted small mb-1">Sistem Informasi Nilai Akademik</div>
+                <p class="text-muted" style="font-size: 0.88rem;">Masuk ke akun Anda untuk mengelola nilai dan data akademik</p>
+            </div>
+
+            @if (!ViewData.ModelState.IsValid && ViewData.ModelState[string.Empty]?.Errors.Count > 0)
+            {
+                <div class="alert alert-nev alert-nev-danger">
+                    @foreach (var error in ViewData.ModelState[string.Empty]!.Errors)
+                    {
+                        <div>@error.ErrorMessage</div>
+                    }
+                </div>
+            }
+
+            <form asp-action="Login" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+
+                <div class="mb-3">
+                    <label asp-for="Username" class="form-label-nev">Nama Pengguna (Username)</label>
+                    <input asp-for="Username" class="form-control form-control-nev" id="inputUsername" placeholder="Masukkan username Anda" autocomplete="username" autofocus />
+                    <span asp-validation-for="Username" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label-nev">Kata Sandi</label>
+                    <div class="password-field-wrapper">
+                        <input asp-for="Password" class="form-control form-control-nev" id="inputPassword" type="password" placeholder="Masukkan kata sandi" autocomplete="current-password" />
+                        <button class="password-toggle-button" type="button" data-password-toggle aria-label="Tampilkan kata sandi" aria-pressed="false" aria-controls="inputPassword">
+                            <svg data-eye-visible viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>
+                            <svg data-eye-hidden viewBox="0 0 24 24" aria-hidden="true" focusable="false" hidden><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /><path d="m3 3 18 18" /></svg>
+                        </button>
+                    </div>
+                    <span asp-validation-for="Password" class="text-danger small"></span>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="form-check">
+                        <input asp-for="RememberMe" class="form-check-input" type="checkbox" id="rememberMe" />
+                        <label class="form-check-label text-muted small" for="rememberMe">Ingat sesi saya</label>
+                    </div>
+                    <span class="text-muted small">Hubungi Administrator jika lupa kata sandi</span>
+                </div>
+
+                <button type="submit" class="btn btn-nev-primary w-100 py-2 fs-6">
+                    Masuk Sekarang
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

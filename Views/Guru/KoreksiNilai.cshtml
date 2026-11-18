@@ -1,0 +1,73 @@
+@model SistemInformasiNilaiAkademik.ViewModels.KoreksiNilaiViewModel
+@{
+    ViewData["Title"] = "Koreksi Nilai Siswa";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="nev-card">
+            <div class="nev-card-header">
+                <div>
+                    <h4 class="nev-card-title">Koreksi Nilai Siswa</h4>
+                    <div class="text-muted small">Pencatatan riwayat audit perubahan nilai</div>
+                </div>
+                <a asp-action="InputNilai" class="btn btn-sm btn-nev-outline">&larr; Kembali</a>
+            </div>
+
+            <div class="p-3 rounded-3 mb-4" style="background-color: #f8fafc; border: 1px solid var(--border-color);">
+                <div class="row g-2">
+                    <div class="col-6">
+                        <span class="text-muted small d-block">Nama Siswa:</span>
+                        <strong>@Model.NamaSiswa</strong>
+                    </div>
+                    <div class="col-6">
+                        <span class="text-muted small d-block">Mata Pelajaran:</span>
+                        <strong>@Model.NamaMapel</strong>
+                    </div>
+                    <div class="col-6">
+                        <span class="text-muted small d-block">Komponen Penilaian:</span>
+                        <span class="badge bg-primary">@Model.NamaKomponen</span>
+                    </div>
+                    <div class="col-6">
+                        <span class="text-muted small d-block">Nilai Saat Ini:</span>
+                        <span class="fs-5 fw-bold text-danger">@Model.NilaiLama.ToString("0.##")</span>
+                    </div>
+                </div>
+            </div>
+
+            <form asp-action="KoreksiNilai" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="IdNilai" />
+                <input type="hidden" asp-for="NamaSiswa" />
+                <input type="hidden" asp-for="NamaMapel" />
+                <input type="hidden" asp-for="NamaKomponen" />
+                <input type="hidden" asp-for="NilaiLama" />
+
+                <div asp-validation-summary="ModelOnly" class="alert alert-nev alert-nev-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="NilaiBaru" class="form-label-nev">Nilai Baru (Rentang 0–100) *</label>
+                    <input asp-for="NilaiBaru" type="number" step="0.01" min="0" max="100" class="form-control form-control-nev fs-5 fw-bold" required />
+                    <span asp-validation-for="NilaiBaru" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Alasan" class="form-label-nev">Alasan Perubahan / Catatan Koreksi *</label>
+                    <textarea asp-for="Alasan" class="form-control form-control-nev" rows="3" placeholder="Contoh: Koreksi hasil remidial ujian, revisi salah entri nilai tugas harian" required></textarea>
+                    <span asp-validation-for="Alasan" class="text-danger small"></span>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 pt-2 border-top">
+                    <a asp-action="InputNilai" class="btn btn-nev-outline">Batal</a>
+                    <button type="submit" class="btn btn-nev-primary">
+                        Simpan Koreksi Nilai
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

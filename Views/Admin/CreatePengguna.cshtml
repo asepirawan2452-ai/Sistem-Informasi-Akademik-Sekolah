@@ -1,0 +1,81 @@
+@model SistemInformasiNilaiAkademik.ViewModels.PenggunaFormViewModel
+@{
+    ViewData["Title"] = "Tambah Akun Pengguna";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="nev-card">
+            <div class="nev-card-header">
+                <div>
+                    <h4 class="nev-card-title">Tambah Akun Pengguna Baru</h4>
+                    <div class="text-muted small">Buat kredensial login dan tetapkan peran (Admin, Guru, Wali Kelas)</div>
+                </div>
+                <a asp-action="Pengguna" class="btn btn-sm btn-nev-outline">&larr; Kembali</a>
+            </div>
+
+            <form asp-action="CreatePengguna" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="alert alert-nev alert-nev-danger"></div>
+
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label asp-for="Nama" class="form-label-nev">Nama Lengkap Pengguna *</label>
+                        <input asp-for="Nama" class="form-control form-control-nev" placeholder="Masukkan nama lengkap" required />
+                        <span asp-validation-for="Nama" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Username" class="form-label-nev">Username *</label>
+                        <input asp-for="Username" class="form-control form-control-nev" placeholder="Contoh: guru.andi" required />
+                        <span asp-validation-for="Username" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Password" class="form-label-nev">Kata Sandi *</label>
+                        <div class="password-field-wrapper">
+                            <input asp-for="Password" type="password" class="form-control form-control-nev" placeholder="Minimal 8 karakter" required minlength="8" autocomplete="new-password" />
+                            <button class="password-toggle-button" type="button" data-password-toggle aria-label="Tampilkan kata sandi" aria-pressed="false">
+                                <svg data-eye-visible viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>
+                                <svg data-eye-hidden viewBox="0 0 24 24" aria-hidden="true" focusable="false" hidden><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /><path d="m3 3 18 18" /></svg>
+                            </button>
+                        </div>
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="NipNrg" class="form-label-nev">NIP/NRG</label>
+                        <input asp-for="NipNrg" class="form-control form-control-nev" placeholder="Wajib untuk akun Guru/Wali Kelas" />
+                        <span asp-validation-for="NipNrg" class="text-danger small"></span>
+                        <div class="form-text">NIP/NRG diperlukan untuk menghubungkan akun dengan profil guru.</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="IdRole" class="form-label-nev">Peran / Hak Akses *</label>
+                        <select asp-for="IdRole" asp-items="Model.RoleList" class="form-select form-select-nev" required>
+                            <option value="">-- Pilih Peran --</option>
+                        </select>
+                        <span asp-validation-for="IdRole" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Status" class="form-label-nev">Status Akun</label>
+                        <select asp-for="Status" class="form-select form-select-nev">
+                            <option value="Aktif">Aktif</option>
+                            <option value="Nonaktif">Nonaktif</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12 mt-4 pt-2 border-top d-flex justify-content-end gap-2">
+                        <a asp-action="Pengguna" class="btn btn-nev-outline">Batal</a>
+                        <button type="submit" class="btn btn-nev-primary">Simpan Akun</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

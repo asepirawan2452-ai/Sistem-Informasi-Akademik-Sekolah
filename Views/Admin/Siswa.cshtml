@@ -1,0 +1,96 @@
+@model IEnumerable<SistemInformasiNilaiAkademik.Models.Siswa>
+@{
+    ViewData["Title"] = "Master Data Siswa";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h3 class="fw-bold mb-1">Data Siswa</h3>
+        <p class="text-muted small mb-0">Kelola informasi peserta didik, nomor induk siswa, dan kelas.</p>
+    </div>
+    <a asp-action="CreateSiswa" class="btn btn-nev-primary">
+        + Tambah Siswa
+    </a>
+</div>
+
+<div class="nev-card">
+    <!-- Filter & Search Form -->
+    <form method="get" asp-action="Siswa" class="row g-2 mb-4">
+        <div class="col-md-5">
+            <input type="text" name="search" value="@ViewBag.Search" class="form-control form-control-nev" placeholder="Cari nama siswa, NIS, atau NISN..." />
+        </div>
+        <div class="col-md-4">
+            <select name="kelasId" asp-items="ViewBag.KelasList" class="form-select form-select-nev">
+                <option value="">-- Semua Kelas / Rombel --</option>
+            </select>
+        </div>
+        <div class="col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-nev-search w-100">Cari</button>
+            <a asp-action="Siswa" class="btn btn-nev-outline">Reset</a>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table-nev">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>NIS / NISN</th>
+                    <th>Nama Lengkap</th>
+                    <th>L/P</th>
+                    <th>Kelas</th>
+                    <th>Tgl Lahir</th>
+                    <th>Status</th>
+                    <th class="text-end">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ int no = 1; }
+                @foreach (var s in Model)
+                {
+                    <tr>
+                        <td>@(no++)</td>
+                        <td>
+                            <div class="fw-semibold">@s.Nis</div>
+                            <div class="text-muted small">@s.Nisn</div>
+                        </td>
+                        <td class="fw-bold">@s.NamaSiswa</td>
+                        <td>@s.JenisKelamin</td>
+                        <td>
+                            <span class="badge" style="background-color: var(--primary-light); color: var(--primary-color);">
+                                @s.Kelas?.NamaKelas
+                            </span>
+                        </td>
+                        <td>@s.TanggalLahir.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            <span class="badge-pill-status @(s.Status == "Aktif" ? "status-aktif" : "status-nonaktif")">
+                                @s.Status
+                            </span>
+                        </td>
+                        <td class="text-end">
+                            <div class="d-inline-flex gap-1">
+                                <a asp-action="EditSiswa" asp-route-id="@s.IdSiswa" class="btn btn-sm btn-nev-edit py-1 px-2" title="Ubah Data">
+                                    Edit
+                                </a>
+                                <form asp-action="DeleteSiswa" asp-route-id="@s.IdSiswa" method="post" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data siswa @s.NamaSiswa?');">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-nev-danger py-1 px-2" title="Hapus">
+                                        Hapus
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="8" class="text-center py-4 text-muted">
+                            Tidak ada data siswa ditemukan.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

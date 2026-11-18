@@ -1,0 +1,147 @@
+@model SistemInformasiNilaiAkademik.ViewModels.PeriodeAkademikAdminViewModel
+@{
+    ViewData["Title"] = "Periode Akademik";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h3 class="fw-bold mb-1">Periode Akademik</h3>
+        <p class="text-muted small mb-0">Tentukan semester yang sedang berjalan untuk input nilai, rekap, grafik, dan rapor.</p>
+    </div>
+</div>
+
+<div asp-validation-summary="All" class="alert alert-nev alert-nev-danger"></div>
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="nev-card h-100">
+            <div class="nev-card-header">
+                <div>
+                    <h4 class="nev-card-title">Semester Aktif</h4>
+                    <div class="text-muted small">Periode ini dipakai seluruh pengguna.</div>
+                </div>
+            </div>
+            @if (Model.PeriodeAktif != null)
+            {
+                <div class="p-3 rounded-3 mb-3" style="background-color: var(--primary-light);">
+                    <div class="fw-bold fs-5">@Model.PeriodeAktif.NamaPeriode</div>
+                    <div class="small text-muted">@Model.PeriodeAktif.TanggalMulai.ToString("dd MMM yyyy") – @Model.PeriodeAktif.TanggalSelesai.ToString("dd MMM yyyy")</div>
+                </div>
+                <p class="text-muted small mb-0">Nilai lama tetap tersimpan pada periodenya. Mengaktifkan semester lain tidak memindahkan atau mengganti label data yang sudah ada.</p>
+            }
+            else
+            {
+                <div class="alert alert-warning mb-0">Belum ada periode aktif. Aktifkan salah satu periode dari daftar setelah menambahkannya.</div>
+            }
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <div class="nev-card">
+            <div class="nev-card-header">
+                <div>
+                    <h4 class="nev-card-title">Tambah Semester</h4>
+                    <div class="text-muted small">Buat periode Ganjil atau Genap untuk tahun ajaran berikutnya.</div>
+                </div>
+            </div>
+            <form asp-action="TambahPeriodeAkademik" method="post">
+                @Html.AntiForgeryToken()
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="Form.TahunAjaran" class="form-label-nev">Tahun Ajaran</label>
+                        <input asp-for="Form.TahunAjaran" class="form-control form-control-nev" placeholder="2025/2026" />
+                        <span asp-validation-for="Form.TahunAjaran" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Form.Semester" class="form-label-nev">Semester</label>
+                        <select asp-for="Form.Semester" class="form-select form-select-nev">
+                            <option value="Ganjil">Ganjil</option>
+                            <option value="Genap">Genap</option>
+                        </select>
+                        <span asp-validation-for="Form.Semester" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Form.TanggalMulai" class="form-label-nev">Tanggal Mulai</label>
+                        <input asp-for="Form.TanggalMulai" type="date" class="form-control form-control-nev" />
+                        <span asp-validation-for="Form.TanggalMulai" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Form.TanggalSelesai" class="form-label-nev">Tanggal Selesai</label>
+                        <input asp-for="Form.TanggalSelesai" type="date" class="form-control form-control-nev" />
+                        <span asp-validation-for="Form.TanggalSelesai" class="text-danger small"></span>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-check">
+                            <input asp-for="Form.SalinPenugasanPeriodeAktif" class="form-check-input" />
+                            <label asp-for="Form.SalinPenugasanPeriodeAktif" class="form-check-label">Salin penugasan guru dari periode aktif</label>
+                        </div>
+                        <div class="form-text">Nilai dan rekap tidak disalin. Periode baru mulai tanpa data nilai.</div>
+                    </div>
+                    <div class="col-12 d-flex justify-content-end">
+                        <button type="submit" class="btn btn-nev-primary">Tambah Periode</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="nev-card mt-4">
+    <div class="nev-card-header">
+        <div>
+            <h4 class="nev-card-title">Daftar Periode</h4>
+            <div class="text-muted small">Pilih satu periode untuk dijadikan semester yang sedang berjalan.</div>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table-nev">
+            <thead>
+                <tr>
+                    <th>Periode</th>
+                    <th>Tanggal</th>
+                    <th>Status</th>
+                    <th class="text-end">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var periode in Model.DaftarPeriode)
+                {
+                    <tr>
+                        <td>
+                            <div class="fw-bold">@periode.NamaPeriode</div>
+                            <div class="text-muted small">Semester @periode.Semester · Tahun ajaran @periode.TahunAjaran</div>
+                        </td>
+                        <td class="text-muted small">@periode.TanggalMulai.ToString("dd MMM yyyy") – @periode.TanggalSelesai.ToString("dd MMM yyyy")</td>
+                        <td>
+                            <span class="badge-pill-status @(periode.Status == "Aktif" ? "status-aktif" : "status-nonaktif")">
+                                @periode.Status
+                            </span>
+                        </td>
+                        <td class="text-end">
+                            @if (periode.Status != "Aktif")
+                            {
+                                <form asp-action="AktifkanPeriodeAkademik" method="post" class="d-inline" onsubmit="return confirm('Aktifkan @periode.NamaPeriode untuk seluruh sistem?');">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@periode.IdPeriode" />
+                                    <button type="submit" class="btn btn-sm btn-nev-primary">Jadikan Aktif</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="text-muted small">Sedang digunakan</span>
+                            }
+                        </td>
+                    </tr>
+                }
+                @if (!Model.DaftarPeriode.Any())
+                {
+                    <tr><td colspan="4" class="text-center py-4 text-muted">Belum ada periode akademik.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

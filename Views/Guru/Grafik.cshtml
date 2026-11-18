@@ -1,0 +1,76 @@
+@model SistemInformasiNilaiAkademik.ViewModels.GrafikViewModel
+@{
+    ViewData["Title"] = "Grafik Rata-rata Nilai Kelas";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h3 class="fw-bold mb-1">Grafik Rata-rata Nilai Kelas</h3>
+        <p class="text-muted small mb-0">Semester berjalan: <strong>@Model.NamaPeriode</strong> &bull; Visualisasi statistik capaian belajar kelas per mata pelajaran.</p>
+    </div>
+</div>
+
+<div class="nev-card mb-4">
+    <form method="get" asp-action="Grafik" class="row g-3 align-items-end">
+        <div class="col-md-8">
+            <label class="form-label-nev">Kelas / Rombel</label>
+            <select name="idKelas" asp-items="ViewBag.KelasList" class="form-select form-select-nev" onchange="this.form.submit()">
+            </select>
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-nev-search w-100">Tampilkan</button>
+        </div>
+    </form>
+</div>
+
+<!-- Summary Metrics Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="stat-widget">
+            <div class="stat-title">Rata-rata Keseluruhan</div>
+            <div class="stat-value">@Model.RataRataKeseluruhan.ToString("0.##")</div>
+            <div class="stat-sub">Semua Mata Pelajaran</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-widget">
+            <div class="stat-title">Rata-rata Tertinggi</div>
+            <div class="stat-value fs-4 text-truncate" title="@Model.MapelTertinggi">@Model.MapelTertinggi</div>
+            <div class="stat-sub">Mata Pelajaran Unggul</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-widget">
+            <div class="stat-title">Rata-rata Terendah</div>
+            <div class="stat-value fs-4 text-truncate" title="@Model.MapelTerendah">@Model.MapelTerendah</div>
+            <div class="stat-sub text-danger">Perlu Perhatian / Remidi</div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Canvas Bar Chart -->
+<div class="nev-card">
+    <div class="nev-card-header">
+        <div>
+            <h5 class="nev-card-title">Diagram Batang Rata-rata Nilai @Model.NamaKelas</h5>
+            <div class="text-muted small">Periode: @Model.NamaPeriode &bull; @Model.TotalSiswa Siswa Aktif</div>
+        </div>
+    </div>
+
+    <div class="w-100" style="min-height: 340px;">
+        <canvas id="grafikKelasCanvas" height="320"></canvas>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var labels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.LabelsMapel));
+            var values = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.DataRataRata));
+            
+            if (window.NevCharts) {
+                window.NevCharts.drawBar('grafikKelasCanvas', labels, values);
+            }
+        });
+    </script>
+}

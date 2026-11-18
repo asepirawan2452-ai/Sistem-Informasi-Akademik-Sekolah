@@ -1,0 +1,165 @@
+﻿@using System.Security.Claims
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SIAKAD Nilai Akademik</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="no-print">
+        <nav class="navbar navbar-light navbar-expand-xxl navbar-nev sticky-top">
+            <div class="container-fluid px-lg-4">
+                <a class="brand-badge" asp-controller="Home" asp-action="Index">
+                    <img class="school-logo-navbar" src="/images/logo-sekolah.png" alt="Logo SMK Negeri 1 Lestari" />
+                    <div>
+                        <div style="line-height: 1.1;">SIAKAD</div>
+                        <div style="font-size: 0.72rem; color: #64748b; font-weight: 500;">SMK Negeri 1 Lestari</div>
+                    </div>
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Buka menu navigasi">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navMenu">
+                    <ul class="navbar-nav me-auto ms-lg-4 mb-2 mb-xxl-0">
+                        @if (User.Identity?.IsAuthenticated ?? false)
+                        {
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-nev @(ViewContext.RouteData.Values["Action"]?.ToString() == "Index" && ViewContext.RouteData.Values["Controller"]?.ToString() == "Admin" ? "active" : "")" asp-controller="Admin" asp-action="Index">Dashboard</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-nev @(ViewContext.RouteData.Values["Action"]?.ToString() == "Siswa" ? "active" : "")" asp-controller="Admin" asp-action="Siswa">Data Siswa</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-nev @(ViewContext.RouteData.Values["Action"]?.ToString() == "Guru" ? "active" : "")" asp-controller="Admin" asp-action="Guru">Data Guru</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-nev @(ViewContext.RouteData.Values["Action"]?.ToString() == "Mapel" ? "active" : "")" asp-controller="Admin" asp-action="Mapel">Mata Pelajaran</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-nev @(ViewContext.RouteData.Values["Action"]?.ToString() == "Kelas" ? "active" : "")" asp-controller="Admin" asp-action="Kelas">Data Kelas</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-nev @(ViewContext.RouteData.Values["Action"]?.ToString() == "Penugasan" ? "active" : "")" asp-controller="Admin" asp-action="Penugasan">Penugasan</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-nev @(ViewContext.RouteData.Values["Action"]?.ToString() == "Bobot" ? "active" : "")" asp-controller="Admin" asp-action="Bobot">Bobot Nilai</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-nev @(ViewContext.RouteData.Values["Action"]?.ToString() == "PeriodeAkademik" ? "active" : "")" asp-controller="Admin" asp-action="PeriodeAkademik">Periode Akademik</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-nev @(ViewContext.RouteData.Values["Action"]?.ToString() == "Pengguna" ? "active" : "")" asp-controller="Admin" asp-action="Pengguna">Akun Pengguna</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-nev @(ViewContext.RouteData.Values["Action"]?.ToString() == "Pengujian" ? "active" : "")" asp-controller="Admin" asp-action="Pengujian">Pengujian Sistem</a>
+                                </li>
+                            }
+                            else if (User.IsInRole("WaliKelas"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-nev @(ViewContext.RouteData.Values["Action"]?.ToString() == "Index" && ViewContext.RouteData.Values["Controller"]?.ToString() == "WaliKelas" ? "active" : "")" asp-controller="WaliKelas" asp-action="Index">Dashboard Wali</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-nev @(ViewContext.RouteData.Values["Action"]?.ToString() == "InputNilai" ? "active" : "")" asp-controller="Guru" asp-action="InputNilai">Input Nilai</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-nev @(ViewContext.RouteData.Values["Action"]?.ToString() == "RekapKelas" ? "active" : "")" asp-controller="WaliKelas" asp-action="RekapKelas">Rekap & Rapor Kelas</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-nev @(ViewContext.RouteData.Values["Action"]?.ToString() == "GrafikKelas" ? "active" : "")" asp-controller="WaliKelas" asp-action="GrafikKelas">Grafik Nilai</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-nev @(ViewContext.RouteData.Values["Action"]?.ToString() == "RiwayatPerubahan" ? "active" : "")" asp-controller="Guru" asp-action="RiwayatPerubahan">Riwayat Koreksi</a>
+                                </li>
+                            }
+                            else if (User.IsInRole("Guru"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-nev @(ViewContext.RouteData.Values["Action"]?.ToString() == "Index" && ViewContext.RouteData.Values["Controller"]?.ToString() == "Guru" ? "active" : "")" asp-controller="Guru" asp-action="Index">Dashboard</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-nev @(ViewContext.RouteData.Values["Action"]?.ToString() == "InputNilai" ? "active" : "")" asp-controller="Guru" asp-action="InputNilai">Input Nilai</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-nev @(ViewContext.RouteData.Values["Action"]?.ToString() == "RekapNilai" ? "active" : "")" asp-controller="Guru" asp-action="RekapNilai">Rekap Mapel</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-nev @(ViewContext.RouteData.Values["Action"]?.ToString() == "Grafik" ? "active" : "")" asp-controller="Guru" asp-action="Grafik">Grafik Kelas</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-nev @(ViewContext.RouteData.Values["Action"]?.ToString() == "RiwayatPerubahan" ? "active" : "")" asp-controller="Guru" asp-action="RiwayatPerubahan">Riwayat Koreksi</a>
+                                </li>
+                            }
+                        }
+                    </ul>
+
+                    <div class="user-nav-actions d-flex align-items-center gap-2">
+                        @if (User.Identity?.IsAuthenticated ?? false)
+                        {
+                            var fullName = User.FindFirst("FullName")?.Value ?? User.Identity?.Name ?? "User";
+                            var role = User.FindFirst(ClaimTypes.Role)?.Value ?? "Guru";
+                            var initial = !string.IsNullOrEmpty(fullName) ? fullName[0].ToString().ToUpper() : "U";
+
+                            <div class="user-profile-pill">
+                                <div class="avatar-initial">@initial</div>
+                                <div class="text-start d-none d-sm-block" style="line-height: 1.2;">
+                                    <div style="font-size: 0.88rem; font-weight: 700; color: #1e293b;">@fullName</div>
+                                    <span class="badge" style="background-color: var(--primary-light); color: var(--primary-color); font-size: 0.72rem; padding: 2px 6px;">@role</span>
+                                </div>
+                            </div>
+
+                            <a asp-controller="Account" asp-action="Profile" class="btn btn-sm btn-nev-settings" title="Pengaturan Profil">
+                                Profil
+                            </a>
+
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-nev-danger" title="Keluar">
+                                    Keluar
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <a asp-controller="Account" asp-action="Login" class="btn btn-nev-primary btn-sm">
+                                Masuk Sistem
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container-fluid px-lg-4 py-4 flex-grow-1">
+        <partial name="_Notification" />
+        <main role="main">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="footer-nev no-print">
+        <div class="container-fluid px-lg-4 d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2">
+            <div>
+                &copy; @DateTime.Now.Year <strong>SIAKAD SMK Negeri 1 Lestari</strong> — Sistem Informasi Nilai Akademik
+            </div>
+            <div class="text-muted" style="font-size: 0.8rem;">
+                Kabupaten Jawa Barat &bull;
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/chart-helper.js" asp-append-version="true"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

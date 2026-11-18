@@ -1,0 +1,91 @@
+@model IEnumerable<SistemInformasiNilaiAkademik.Models.PenugasanMengajar>
+@{
+    ViewData["Title"] = "Penugasan Mengajar Guru";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h3 class="fw-bold mb-1">Penugasan Mengajar Guru</h3>
+        <p class="text-muted small mb-0">Memetakan guru yang berhak menginput dan mengelola nilai untuk tiap mata pelajaran dan rombel kelas.</p>
+    </div>
+    <a asp-action="CreatePenugasan" class="btn btn-nev-primary">
+        + Tambah Penugasan
+    </a>
+</div>
+
+<div class="nev-card">
+    <!-- Filter -->
+    <form method="get" asp-action="Penugasan" class="row g-2 mb-4">
+        <div class="col-md-5">
+            <select name="kelasId" asp-items="ViewBag.KelasList" class="form-select form-select-nev">
+                <option value="">-- Semua Kelas / Rombel --</option>
+            </select>
+        </div>
+        <div class="col-md-5">
+            <select name="guruId" asp-items="ViewBag.GuruList" class="form-select form-select-nev">
+                <option value="">-- Semua Guru Pengajar --</option>
+            </select>
+        </div>
+        <div class="col-md-2 d-flex gap-2">
+            <button type="submit" class="btn btn-nev-search w-100">Filter</button>
+            <a asp-action="Penugasan" class="btn btn-nev-outline">Reset</a>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table-nev">
+            <thead>
+                <tr>
+                    <th>Kelas / Rombel</th>
+                    <th>Kode & Nama Mata Pelajaran</th>
+                    <th>Kelompok</th>
+                    <th>Guru Pengajar</th>
+                    <th>Tahun Ajaran / Semester</th>
+                    <th class="text-end">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model)
+                {
+                    <tr>
+                        <td class="fw-bold">
+                            <span class="badge" style="background-color: var(--primary-light); color: var(--primary-color); font-size: 0.88rem;">
+                                @p.Kelas?.NamaKelas
+                            </span>
+                        </td>
+                        <td>
+                            <div class="fw-semibold">@p.Mapel?.NamaMapel</div>
+                            <div class="text-muted small">@p.Mapel?.KodeMapel</div>
+                        </td>
+                        <td>
+                            <span class="badge" style="background-color: #f1f5f9; color: #334155;">
+                                @p.Mapel?.Kelompok
+                            </span>
+                        </td>
+                        <td>
+                            <div class="fw-bold text-dark">@p.Guru?.Nama</div>
+                            <div class="text-muted small">NIP: @p.Guru?.NipNrg</div>
+                        </td>
+                        <td class="text-muted small">
+                            @p.Periode?.NamaPeriode
+                        </td>
+                        <td class="text-end">
+                            <form asp-action="DeletePenugasan" asp-route-id="@p.IdPenugasan" method="post" class="d-inline" onsubmit="return confirm('Hapus penugasan mengajar ini?');">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-nev-danger py-1 px-2">Hapus</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-muted">
+                            Tidak ada penugasan mengajar yang cocok.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

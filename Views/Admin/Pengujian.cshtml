@@ -1,0 +1,112 @@
+@model SistemInformasiNilaiAkademik.ViewModels.TestSuiteResultViewModel
+@{
+    ViewData["Title"] = "Pemeriksaan Sistem";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h3 class="fw-bold mb-1">Pemeriksaan Sistem</h3>
+        <p class="text-muted small mb-0">Hasil pemeriksaan perhitungan nilai dan data pendukung aplikasi.</p>
+    </div>
+    <div>
+        <a asp-action="Pengujian" class="btn btn-nev-primary">
+            Jalankan Lagi
+        </a>
+    </div>
+</div>
+
+<!-- Ringkasan pemeriksaan -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="stat-widget">
+            <div class="stat-title">Jumlah Pemeriksaan</div>
+            <div class="stat-value">@Model.TotalTests</div>
+            <div class="stat-sub">Pemeriksaan yang dijalankan</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-widget">
+            <div class="stat-title">Lulus</div>
+            <div class="stat-value text-success">@Model.PassedTests</div>
+            <div class="stat-sub text-success">Sesuai hasil pemeriksaan</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-widget">
+            <div class="stat-title">Perlu Ditinjau</div>
+            <div class="stat-value @(Model.FailedTests > 0 ? "text-danger" : "text-muted")">@Model.FailedTests</div>
+            <div class="stat-sub">Tidak lulus pemeriksaan</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-widget">
+            <div class="stat-title">Durasi</div>
+            <div class="stat-value fs-3">@Model.ExecutionTimeMs <span class="fs-6 fw-normal text-muted">ms</span></div>
+            <div class="stat-sub">Waktu menjalankan pemeriksaan</div>
+        </div>
+    </div>
+</div>
+
+<!-- Rincian pemeriksaan -->
+<div class="nev-card">
+    <div class="nev-card-header">
+        <div>
+            <h5 class="nev-card-title">Rincian Pemeriksaan</h5>
+            <div class="text-muted small">Terakhir dijalankan: @Model.ExecutedAt.ToString("dd MMMM yyyy HH:mm:ss")</div>
+        </div>
+        <div>
+            @if (Model.FailedTests == 0)
+            {
+                <span class="badge-pill-status status-aktif px-3 py-2 fs-6">SEMUA PEMERIKSAAN LULUS</span>
+            }
+            else
+            {
+                <span class="badge-pill-status status-nonaktif px-3 py-2 fs-6">ADA PEMERIKSAAN YANG GAGAL</span>
+            }
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table-nev">
+            <thead>
+                <tr>
+                    <th style="width: 70px;">Kode</th>
+                    <th style="width: 180px;">Area Pengujian</th>
+                    <th>Nama Skenario</th>
+                    <th>Data Masukan</th>
+                    <th>Hasil yang Diharapkan</th>
+                    <th>Hasil Aktual</th>
+                    <th class="text-center" style="width: 100px;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var tc in Model.TestCases)
+                {
+                    <tr>
+                        <td class="fw-bold">@tc.Code</td>
+                        <td>
+                            <span class="badge bg-light text-dark border">@tc.AreaPengujian</span>
+                        </td>
+                        <td>
+                            <div class="fw-bold">@tc.Title</div>
+                            <div class="text-muted small">@tc.Notes</div>
+                        </td>
+                        <td class="small"><code>@tc.InputDescription</code></td>
+                        <td class="small fw-semibold text-secondary">@tc.ExpectedOutput</td>
+                        <td class="small fw-bold @(tc.IsSuccess ? "text-success" : "text-danger")">@tc.ActualOutput</td>
+                        <td class="text-center">
+                            @if (tc.IsSuccess)
+                            {
+                                <span class="badge-pill-status status-aktif">LULUS</span>
+                            }
+                            else
+                            {
+                                <span class="badge-pill-status status-nonaktif">GAGAL</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

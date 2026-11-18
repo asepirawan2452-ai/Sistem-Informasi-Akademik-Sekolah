@@ -1,0 +1,196 @@
+@model SistemInformasiNilaiAkademik.ViewModels.RaporViewModel
+@{
+    ViewData["Title"] = $"Rapor - {Model.NamaSiswa} ({Model.NamaKelas})";
+}
+
+<!-- Action Bar (Hidden on print) -->
+<div class="no-print d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold mb-1">Pratinjau Dokumen Rapor</h4>
+        <div class="text-muted small">Format cetak A4 resmi laporan capaian hasil belajar siswa</div>
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-action="RekapKelas" class="btn btn-nev-outline">&larr; Kembali ke Rekap</a>
+        <button type="button" class="btn btn-nev-print" onclick="window.print()">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="me-1 d-inline-block align-text-bottom"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+            Cetak Dokumen Rapor (A4 / PDF)
+        </button>
+    </div>
+</div>
+
+<!-- A4 Paper Container -->
+<div class="rapor-print-container bg-white p-4 p-md-5 mx-auto rounded-3 shadow-sm" style="max-width: 900px; color: #000; font-family: 'Times New Roman', Times, serif;">
+    
+    <!-- KOP SEKOLAH -->
+    <div class="text-center pb-3 mb-4" style="border-bottom: 3px double #000;">
+        <div class="d-flex align-items-center justify-content-center gap-3 mb-2">
+            <img class="school-logo-report" src="/images/logo-sekolah.png" alt="Logo SMK Negeri 1 Lestari" />
+            <div class="text-start">
+                <div style="font-size: 12pt; font-weight: bold; text-transform: uppercase;">PEMERINTAH KABUPATEN JAWA BARAT</div>
+                <div style="font-size: 11pt; font-weight: bold; text-transform: uppercase;">DINAS PENDIDIKAN</div>
+                <div style="font-size: 17pt; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">SMK NEGERI 1 LESTARI</div>
+                <div style="font-size: 10pt; font-style: italic;">
+                    Kabupaten Jawa Barat &bull; Telp. (022) 123456 &bull; Website: www.smkn1lestari.sch.id
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JUDUL RAPOR -->
+    <div class="text-center mb-4">
+        <h5 style="font-size: 14pt; font-weight: bold; text-decoration: underline; margin-bottom: 2px;">
+            LAPORAN CAPAIAN KOMPETENSI BELAJAR PESERTA DIDIK
+        </h5>
+        <div style="font-size: 11pt;">Tahun Ajaran @Model.TahunAjaran &bull; Semester @Model.Semester</div>
+    </div>
+
+    <!-- IDENTITAS SISWA & KELAS -->
+    <table class="w-100 mb-4" style="font-size: 11pt;">
+        <tr>
+            <td style="width: 20%; padding: 3px 0;"><strong>Nama Peserta Didik</strong></td>
+            <td style="width: 2%;">:</td>
+            <td style="width: 38%;"><strong>@Model.NamaSiswa.ToUpper()</strong></td>
+            <td style="width: 18%; padding: 3px 0;"><strong>Kelas / Rombel</strong></td>
+            <td style="width: 2%;">:</td>
+            <td style="width: 20%;">@Model.NamaKelas</td>
+        </tr>
+        <tr>
+            <td style="padding: 3px 0;"><strong>NIS / NISN</strong></td>
+            <td>:</td>
+            <td>@Model.Nis / @Model.Nisn</td>
+            <td style="padding: 3px 0;"><strong>Semester</strong></td>
+            <td>:</td>
+            <td>@Model.Semester</td>
+        </tr>
+        <tr>
+            <td style="padding: 3px 0;"><strong>Program Keahlian</strong></td>
+            <td>:</td>
+            <td>@Model.Jurusan</td>
+            <td style="padding: 3px 0;"><strong>Tahun Ajaran</strong></td>
+            <td>:</td>
+            <td>@Model.TahunAjaran</td>
+        </tr>
+    </table>
+
+    <!-- TABEL NILAI A: KELOMPOK MUATAN UMUM -->
+    <div class="fw-bold mb-1" style="font-size: 11pt;">A. KELOMPOK MUATAN UMUM</div>
+    <table class="table table-bordered rapor-table mb-4" style="border: 1px solid #000; font-size: 10.5pt;">
+        <thead class="text-center" style="background-color: #f2f2f2;">
+            <tr>
+                <th style="width: 5%; border: 1px solid #000;">No</th>
+                <th style="border: 1px solid #000;">Mata Pelajaran</th>
+                <th style="width: 10%; border: 1px solid #000;">Harian</th>
+                <th style="width: 10%; border: 1px solid #000;">UTS</th>
+                <th style="width: 10%; border: 1px solid #000;">UAS</th>
+                <th style="width: 12%; border: 1px solid #000;">Nilai Akhir</th>
+                <th style="width: 8%; border: 1px solid #000;">Huruf</th>
+                <th style="width: 22%; border: 1px solid #000;">Capaian Kompetensi</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var u in Model.NilaiMuatanUmum)
+            {
+                <tr>
+                    <td class="text-center" style="border: 1px solid #000;">@u.No</td>
+                    <td style="border: 1px solid #000;">@u.NamaMapel</td>
+                    <td class="text-center" style="border: 1px solid #000;">@u.NilaiHarian.ToString("0.##")</td>
+                    <td class="text-center" style="border: 1px solid #000;">@u.NilaiUTS.ToString("0.##")</td>
+                    <td class="text-center" style="border: 1px solid #000;">@u.NilaiUAS.ToString("0.##")</td>
+                    <td class="text-center fw-bold" style="border: 1px solid #000;">@u.NilaiAkhir.ToString("0.##")</td>
+                    <td class="text-center fw-bold" style="border: 1px solid #000;">@u.NilaiHuruf</td>
+                    <td style="border: 1px solid #000; font-size: 9.5pt;">@u.Keterangan</td>
+                </tr>
+            }
+            @if (!Model.NilaiMuatanUmum.Any())
+            {
+                <tr>
+                    <td colspan="8" class="text-center" style="border: 1px solid #000;">Belum ada nilai muatan umum terisi.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- TABEL NILAI B: KELOMPOK MUATAN KEJURUAN -->
+    <div class="fw-bold mb-1" style="font-size: 11pt;">B. KELOMPOK MUATAN KEJURUAN</div>
+    <table class="table table-bordered rapor-table mb-4" style="border: 1px solid #000; font-size: 10.5pt;">
+        <thead class="text-center" style="background-color: #f2f2f2;">
+            <tr>
+                <th style="width: 5%; border: 1px solid #000;">No</th>
+                <th style="border: 1px solid #000;">Mata Pelajaran Kejuruan</th>
+                <th style="width: 10%; border: 1px solid #000;">Harian</th>
+                <th style="width: 10%; border: 1px solid #000;">UTS</th>
+                <th style="width: 10%; border: 1px solid #000;">UAS</th>
+                <th style="width: 12%; border: 1px solid #000;">Nilai Akhir</th>
+                <th style="width: 8%; border: 1px solid #000;">Huruf</th>
+                <th style="width: 22%; border: 1px solid #000;">Capaian Kompetensi</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var k in Model.NilaiMuatanKejuruan)
+            {
+                <tr>
+                    <td class="text-center" style="border: 1px solid #000;">@k.No</td>
+                    <td style="border: 1px solid #000;">@k.NamaMapel</td>
+                    <td class="text-center" style="border: 1px solid #000;">@k.NilaiHarian.ToString("0.##")</td>
+                    <td class="text-center" style="border: 1px solid #000;">@k.NilaiUTS.ToString("0.##")</td>
+                    <td class="text-center" style="border: 1px solid #000;">@k.NilaiUAS.ToString("0.##")</td>
+                    <td class="text-center fw-bold" style="border: 1px solid #000;">@k.NilaiAkhir.ToString("0.##")</td>
+                    <td class="text-center fw-bold" style="border: 1px solid #000;">@k.NilaiHuruf</td>
+                    <td style="border: 1px solid #000; font-size: 9.5pt;">@k.Keterangan</td>
+                </tr>
+            }
+            @if (!Model.NilaiMuatanKejuruan.Any())
+            {
+                <tr>
+                    <td colspan="8" class="text-center" style="border: 1px solid #000;">Belum ada nilai kejuruan terisi.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- RINGKASAN CAPAIAN AKADEMIK -->
+    <div class="row g-2 mb-4" style="font-size: 11pt;">
+        <div class="col-8">
+            <div class="p-3 border" style="border: 1px solid #000 !important;">
+                <strong>Catatan Wali Kelas:</strong>
+                <p class="mb-0 mt-1 fst-italic">"@Model.CatatanWaliKelas"</p>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="p-3 border text-center" style="border: 1px solid #000 !important;">
+                <div class="small">Rata-rata Nilai Akhir:</div>
+                <div style="font-size: 16pt; font-weight: bold;">@Model.RataRataNilai.ToString("0.##")</div>
+                <div class="small">Predikat Umum: <strong>@Model.PredikatKeseluruhan</strong></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TANDA TANGAN (SIGNATURE BLOCKS) -->
+    <table class="w-100 mt-5" style="font-size: 11pt;">
+        <tr>
+            <td style="width: 35%; text-align: center;">
+                Mengetahui,<br />
+                Orang Tua / Wali Murid
+                <br /><br /><br /><br />
+                ( .................................................. )
+            </td>
+            <td style="width: 30%;"></td>
+            <td style="width: 35%; text-align: center;">
+                Jawa Barat, @Model.TanggalCetak.ToString("dd MMMM yyyy")<br />
+                Wali Kelas,
+                <br /><br /><br /><br />
+                <strong>@Model.NamaWaliKelas</strong><br />
+                NIP. @Model.NipWaliKelas
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3" style="text-align: center; padding-top: 35px;">
+                Mengetahui,<br />
+                Kepala SMK Negeri 1 Lestari
+                <br /><br /><br /><br />
+                <strong>@Model.NamaKepalaSekolah</strong><br />
+                NIP. @Model.NipKepalaSekolah
+            </td>
+        </tr>
+    </table>
+</div>

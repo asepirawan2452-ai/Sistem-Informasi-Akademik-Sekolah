@@ -1,0 +1,110 @@
+@model SistemInformasiNilaiAkademik.ViewModels.BobotMapelViewModel
+@{
+    ViewData["Title"] = "Ubah Bobot Penilaian";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="nev-card">
+            <div class="nev-card-header">
+                <div>
+                    <h4 class="nev-card-title">Atur Bobot Penilaian</h4>
+                    <div class="text-muted small">Mata Pelajaran: <strong>@Model.NamaMapel (@Model.KodeMapel)</strong></div>
+                </div>
+                <a asp-action="Bobot" class="btn btn-sm btn-nev-outline">&larr; Kembali</a>
+            </div>
+
+            <form asp-action="EditBobot" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="IdMapel" />
+                <input type="hidden" asp-for="KodeMapel" />
+                <input type="hidden" asp-for="NamaMapel" />
+                <div asp-validation-summary="ModelOnly" class="alert alert-nev alert-nev-danger"></div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <label asp-for="BobotHarian" class="form-label-nev">Bobot Harian (%) *</label>
+                        <div class="input-group">
+                            <input asp-for="BobotHarian" type="number" step="0.1" min="0" max="100" class="form-control form-control-nev bobot-input" id="harian" required />
+                            <span class="input-group-text bg-light">%</span>
+                        </div>
+                        <span asp-validation-for="BobotHarian" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="BobotUTS" class="form-label-nev">Bobot UTS (%) *</label>
+                        <div class="input-group">
+                            <input asp-for="BobotUTS" type="number" step="0.1" min="0" max="100" class="form-control form-control-nev bobot-input" id="uts" required />
+                            <span class="input-group-text bg-light">%</span>
+                        </div>
+                        <span asp-validation-for="BobotUTS" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="BobotUAS" class="form-label-nev">Bobot UAS (%) *</label>
+                        <div class="input-group">
+                            <input asp-for="BobotUAS" type="number" step="0.1" min="0" max="100" class="form-control form-control-nev bobot-input" id="uas" required />
+                            <span class="input-group-text bg-light">%</span>
+                        </div>
+                        <span asp-validation-for="BobotUAS" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <!-- Live Total Indicator -->
+                <div class="p-3 rounded-3 mb-4" id="totalBox" style="background-color: #f8fafc; border: 1px solid var(--border-color);">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="fw-bold">Total Akumulasi Bobot:</div>
+                            <div class="text-muted small" id="totalHelp">Total harus tepat 100% untuk dapat disimpan</div>
+                        </div>
+                        <div>
+                            <span class="fs-4 fw-bold" id="totalIndicator">100%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 pt-2 border-top">
+                    <a asp-action="Bobot" class="btn btn-nev-outline">Batal</a>
+                    <button type="submit" class="btn btn-nev-primary" id="btnSubmit">
+                        Simpan Perubahan Bobot
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function updateTotal() {
+            var h = parseFloat(document.getElementById('harian').value) || 0;
+            var u = parseFloat(document.getElementById('uts').value) || 0;
+            var a = parseFloat(document.getElementById('uas').value) || 0;
+            var tot = Math.round((h + u + a) * 100) / 100;
+            
+            var indicator = document.getElementById('totalIndicator');
+            var btn = document.getElementById('btnSubmit');
+            var help = document.getElementById('totalHelp');
+
+            indicator.innerText = tot + '%';
+
+            if (tot === 100) {
+                indicator.style.color = '#10b981';
+                help.innerText = "✓ Sempurna! Total bobot tepat 100%.";
+                help.style.color = '#059669';
+                btn.disabled = false;
+            } else {
+                indicator.style.color = '#ef4444';
+                help.innerText = "⚠ Perhatian: Total bobot harus tepat 100% (saat ini: " + tot + "%).";
+                help.style.color = '#dc2626';
+            }
+        }
+
+        document.querySelectorAll('.bobot-input').forEach(function(elem) {
+            elem.addEventListener('input', updateTotal);
+        });
+
+        document.addEventListener("DOMContentLoaded", updateTotal);
+    </script>
+}

@@ -1,0 +1,165 @@
+@model SistemInformasiNilaiAkademik.ViewModels.WaliKelasDashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard Wali Kelas";
+}
+
+<div class="row g-4 mb-4">
+    <!-- Emerald Promo Card for Wali Kelas -->
+    <div class="col-lg-7">
+        <div class="nev-promo-card h-100 d-flex flex-column justify-content-between">
+            <div>
+                <span class="badge mb-3 px-3 py-1" style="background: rgba(255,255,255,0.2); font-weight: 600; font-size: 0.82rem;">
+                    PORTAL WALI KELAS
+                </span>
+                <h3 class="fw-bold mb-1">Kelas @Model.NamaKelas</h3>
+                <div class="text-white-50 small mb-3">Wali Kelas: @Model.NamaWali &bull; Semester: @Model.NamaPeriodeAktif</div>
+                <p class="text-white-50 mb-4" style="max-width: 480px; font-size: 0.95rem;">
+                    Anda bertanggung jawab memantau perkembangan akademik siswa kelas @Model.NamaKelas, memverifikasi rekapitulasi nilai akhir, serta mencetak dokumen rapor hasil belajar.
+                </p>
+            </div>
+            <div class="d-flex flex-wrap gap-2 pt-2">
+                <a asp-action="RekapKelas" class="btn btn-nev-print fw-bold">
+                    Buka Rekap & Cetak Rapor
+                </a>
+                <a asp-action="GrafikKelas" class="btn btn-outline-light" style="border-radius: 12px;">
+                    Grafik Kelas Binaan
+                </a>
+                <a asp-controller="Guru" asp-action="InputNilai" class="btn btn-outline-light" style="border-radius: 12px;">
+                    Input Nilai Mapel
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats Grid -->
+    <div class="col-lg-5">
+        <div class="row g-3">
+            <div class="col-6">
+                <div class="stat-widget">
+                    <div class="stat-title">Jumlah Siswa</div>
+                    <div class="stat-value">@Model.TotalSiswa</div>
+                    <div class="stat-sub">Siswa Binaan Aktif</div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="stat-widget">
+                    <div class="stat-title">Mata Pelajaran</div>
+                    <div class="stat-value">@Model.TotalMapel</div>
+                    <div class="stat-sub">Umum & Kejuruan</div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="stat-widget">
+                    <div class="stat-title">Rata-rata Kelas</div>
+                    <div class="stat-value">@Model.RataRataKelas.ToString("0.##")</div>
+                    <div class="stat-sub">Nilai Akhir Rombel</div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="stat-widget">
+                    <div class="stat-title">Nilai Tuntas</div>
+                    <div class="stat-value">@Model.NilaiTuntasCount</div>
+                    <div class="stat-sub text-success">Mencapai KKM (&ge;75)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bottom Section: Daftar Siswa & Donut Distribusi Huruf -->
+<div class="row g-4">
+    <!-- Left: Daftar Siswa Kelas Binaan dengan Tombol Cetak Rapor Cepat -->
+    <div class="col-lg-8">
+        <div class="nev-card">
+            <div class="nev-card-header">
+                <div>
+                    <h5 class="nev-card-title">Daftar Siswa Kelas @Model.NamaKelas</h5>
+                    <div class="text-muted small">Pratinjau dan cetak rapor setiap peserta didik.</div>
+                </div>
+                <a asp-action="RekapKelas" class="btn btn-sm btn-nev-outline">Rekap Lengkap</a>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table-nev">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>NIS / NISN</th>
+                            <th>Nama Siswa</th>
+                            <th>L/P</th>
+                            <th>Status</th>
+                            <th class="text-end">Cetak Rapor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{ int no = 1; }
+                        @foreach (var s in Model.SiswaList)
+                        {
+                            <tr>
+                                <td>@(no++)</td>
+                                <td>
+                                    <div class="fw-semibold">@s.Nis</div>
+                                    <div class="text-muted small">@s.Nisn</div>
+                                </td>
+                                <td class="fw-bold">@s.NamaSiswa</td>
+                                <td>@s.JenisKelamin</td>
+                                <td>
+                                    <span class="badge-pill-status @(s.Status == "Aktif" ? "status-aktif" : "status-nonaktif")">
+                                        @s.Status
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <a asp-action="CetakRapor" asp-route-idSiswa="@s.IdSiswa" class="btn btn-sm btn-nev-print py-1 px-3" title="Pratinjau Rapor A4">
+                                        Cetak Rapor
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                        @if (!Model.SiswaList.Any())
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center py-4 text-muted">
+                                    Belum ada siswa terdaftar pada kelas binaan Anda.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right: Donut Chart Distribusi Nilai Huruf A, B, C, D -->
+    <div class="col-lg-4">
+        <div class="nev-card text-center">
+            <div class="nev-card-header text-start">
+                <div>
+                    <h5 class="nev-card-title">Distribusi Predikat Huruf</h5>
+                    <div class="text-muted small">Persentase setiap predikat nilai.</div>
+                </div>
+            </div>
+
+            <div class="my-3 d-flex justify-content-center">
+                <canvas id="predikatDonutChart" width="220" height="220"></canvas>
+            </div>
+
+            <div class="d-flex flex-wrap justify-content-center gap-2 mt-3">
+                <span class="badge-grade-a">A: @Model.DistribusiHuruf.GetValueOrDefault("A", 0)</span>
+                <span class="badge-grade-b">B: @Model.DistribusiHuruf.GetValueOrDefault("B", 0)</span>
+                <span class="badge-grade-c">C: @Model.DistribusiHuruf.GetValueOrDefault("C", 0)</span>
+                <span class="badge-grade-d">D: @Model.DistribusiHuruf.GetValueOrDefault("D", 0)</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var dataHuruf = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.DistribusiHuruf));
+            if (window.NevCharts) {
+                window.NevCharts.drawDonut('predikatDonutChart', dataHuruf, "@Model.RataRataKelas.ToString("0.##")");
+            }
+        });
+    </script>
+}

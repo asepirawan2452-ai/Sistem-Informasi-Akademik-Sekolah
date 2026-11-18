@@ -1,0 +1,95 @@
+@model SistemInformasiNilaiAkademik.Models.Pengguna
+@{
+    ViewData["Title"] = "Profil Pengguna";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="nev-card">
+            <div class="nev-card-header">
+                <h4 class="nev-card-title">Informasi Akun</h4>
+                <span class="badge-pill-status @(Model.Status == "Aktif" ? "status-aktif" : "status-nonaktif")">
+                    @Model.Status
+                </span>
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <label class="form-label-nev">Nama Lengkap</label>
+                    <div class="fw-bold fs-5">@Model.Nama</div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label-nev">Nama Pengguna (Username)</label>
+                    <div class="text-muted">@Model.Username</div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label-nev">Peran / Hak Akses</label>
+                    <div><span class="badge bg-success">@Model.Role?.NamaRole</span></div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label-nev">Akun Dibuat Pada</label>
+                    <div class="text-muted">@Model.DibuatPada.ToString("dd MMMM yyyy HH:mm")</div>
+                </div>
+
+                @if (Model.Guru != null)
+                {
+                    <div class="col-md-6">
+                        <label class="form-label-nev">NIP / NRG</label>
+                        <div class="fw-semibold">@Model.Guru.NipNrg</div>
+                    </div>
+                    @if (Model.Guru.KelasWali != null)
+                    {
+                        <div class="col-md-6">
+                            <label class="form-label-nev">Wali Kelas Untuk</label>
+                            <div class="fw-bold text-success">@Model.Guru.KelasWali.NamaKelas</div>
+                        </div>
+                    }
+                }
+            </div>
+
+            <hr />
+
+            <h5 class="fw-bold mt-4 mb-3">Ganti Kata Sandi</h5>
+            <form asp-action="ChangePassword" method="post">
+                @Html.AntiForgeryToken()
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label-nev">Kata Sandi Lama</label>
+                        <div class="password-field-wrapper">
+                            <input name="OldPassword" type="password" class="form-control form-control-nev" autocomplete="current-password" required />
+                            <button class="password-toggle-button" type="button" data-password-toggle aria-label="Tampilkan kata sandi" aria-pressed="false">
+                                <svg data-eye-visible viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>
+                                <svg data-eye-hidden viewBox="0 0 24 24" aria-hidden="true" focusable="false" hidden><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /><path d="m3 3 18 18" /></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label-nev">Kata Sandi Baru</label>
+                        <div class="password-field-wrapper">
+                            <input name="NewPassword" type="password" class="form-control form-control-nev" autocomplete="new-password" required />
+                            <button class="password-toggle-button" type="button" data-password-toggle aria-label="Tampilkan kata sandi" aria-pressed="false">
+                                <svg data-eye-visible viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>
+                                <svg data-eye-hidden viewBox="0 0 24 24" aria-hidden="true" focusable="false" hidden><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /><path d="m3 3 18 18" /></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label-nev">Konfirmasi Kata Sandi</label>
+                        <div class="password-field-wrapper">
+                            <input name="ConfirmPassword" type="password" class="form-control form-control-nev" autocomplete="new-password" required />
+                            <button class="password-toggle-button" type="button" data-password-toggle aria-label="Tampilkan kata sandi" aria-pressed="false">
+                                <svg data-eye-visible viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>
+                                <svg data-eye-hidden viewBox="0 0 24 24" aria-hidden="true" focusable="false" hidden><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /><path d="m3 3 18 18" /></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-12 mt-3">
+                        <button type="submit" class="btn btn-nev-primary">
+                            Perbarui Kata Sandi
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,157 @@
+@model SistemInformasiNilaiAkademik.ViewModels.GuruDashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard Guru";
+}
+
+<!-- Top Section: Emerald Promo Card + Stats Grid -->
+<div class="row g-4 mb-4">
+    <div class="col-lg-7">
+        <div class="nev-promo-card h-100 d-flex flex-column justify-content-between">
+            <div>
+                <span class="badge mb-3 px-3 py-1" style="background: rgba(255,255,255,0.2); font-weight: 600; font-size: 0.82rem;">
+                    PORTAL GURU PENGAJAR
+                </span>
+                <h3 class="fw-bold mb-1">Selamat Datang, @Model.NamaGuru</h3>
+                <div class="text-white-50 small mb-3">NIP/NRG: @Model.Nip</div>
+                <div class="badge bg-light text-success mb-3 px-3 py-2">Semester berjalan: @Model.NamaPeriodeAktif</div>
+                <p class="text-white-50 mb-4" style="max-width: 480px; font-size: 0.95rem;">
+                    Kelola penilaian capaian belajar siswa pada kelas dan mata pelajaran yang ditugaskan kepada Anda. Nilai akhir dihitung secara otomatis berdasarkan bobot kurikulum.
+                </p>
+            </div>
+            <div class="d-flex flex-wrap gap-2 pt-2">
+                <a asp-action="InputNilai" class="btn btn-light fw-bold" style="border-radius: 12px; color: #005743;">
+                    + Input Nilai Siswa
+                </a>
+                <a asp-action="RekapNilai" class="btn btn-outline-light" style="border-radius: 12px;">
+                    Lihat Rekap Mapel
+                </a>
+                <a asp-action="Grafik" class="btn btn-outline-light" style="border-radius: 12px;">
+                    Grafik Rata-rata
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="row g-3">
+            <div class="col-6">
+                <div class="stat-widget">
+                    <div class="stat-title">Kelas Diampu</div>
+                    <div class="stat-value">@Model.TotalKelasDiampu</div>
+                    <div class="stat-sub">Rombongan Belajar</div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="stat-widget">
+                    <div class="stat-title">Mata Pelajaran</div>
+                    <div class="stat-value">@Model.TotalMapelDiampu</div>
+                    <div class="stat-sub">Beban Mengajar</div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="stat-widget">
+                    <div class="stat-title">Total Siswa</div>
+                    <div class="stat-value">@Model.TotalSiswaDiampu</div>
+                    <div class="stat-sub">Peserta Didik</div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="stat-widget">
+                    <div class="stat-title">Nilai Diinput</div>
+                    <div class="stat-value">@Model.TotalNilaiDiinput</div>
+                    <div class="stat-sub">Data Penilaian</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bottom Section: Teaching Assignments & Audit Log -->
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="nev-card">
+            <div class="nev-card-header">
+                <div>
+                    <h5 class="nev-card-title">Penugasan Mengajar Aktif</h5>
+                    <div class="text-muted small">Kelas dan mata pelajaran yang menjadi kewenangan Anda</div>
+                </div>
+                <a asp-action="InputNilai" class="btn btn-sm btn-nev-primary">+ Input Nilai</a>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table-nev">
+                    <thead>
+                        <tr>
+                            <th>Kelas</th>
+                            <th>Kode & Nama Mata Pelajaran</th>
+                            <th>Periode</th>
+                            <th class="text-end">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var p in Model.PenugasanList)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="badge" style="background-color: var(--primary-light); color: var(--primary-color); font-size: 0.88rem;">
+                                        @p.Kelas?.NamaKelas
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="fw-bold">@p.Mapel?.NamaMapel</div>
+                                    <div class="text-muted small">@p.Mapel?.KodeMapel &bull; @p.Mapel?.Kelompok</div>
+                                </td>
+                                <td class="text-muted small">@p.Periode?.NamaPeriode</td>
+                                <td class="text-end">
+                                    <a asp-action="InputNilai" asp-route-idKelas="@p.IdKelas" asp-route-idMapel="@p.IdMapel" class="btn btn-sm btn-nev-primary py-1 px-3">
+                                        Input
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="nev-card">
+            <div class="nev-card-header">
+                <div>
+                    <h5 class="nev-card-title">Riwayat Koreksi Nilai Terakhir</h5>
+                    <div class="text-muted small">Catatan audit perubahan nilai oleh Anda</div>
+                </div>
+                <a asp-action="RiwayatPerubahan" class="btn-pill-action">&rarr;</a>
+            </div>
+
+            @if (Model.RiwayatKoreksi.Any())
+            {
+                <div class="list-group list-group-flush border-0">
+                    @foreach (var l in Model.RiwayatKoreksi)
+                    {
+                        <div class="list-group-item px-0 py-3 border-bottom">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="fw-bold text-dark">@l.Nilai?.Siswa?.NamaSiswa</span>
+                                <span class="badge bg-light text-muted border">@l.WaktuPerubahan.ToLocalTime().ToString("dd/MM/yy HH:mm")</span>
+                            </div>
+                            <div class="text-muted small mb-2">@l.Nilai?.Mapel?.NamaMapel</div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="text-danger text-decoration-line-through">@l.NilaiLama.ToString("0.##")</span>
+                                    &rarr;
+                                    <span class="text-success fw-bold">@l.NilaiBaru.ToString("0.##")</span>
+                                </div>
+                                <div class="text-muted small fst-italic">"@l.Alasan"</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-4 text-muted">Belum ada catatan koreksi nilai.</div>
+            }
+        </div>
+    </div>
+</div>

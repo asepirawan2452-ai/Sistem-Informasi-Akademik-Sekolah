@@ -1,0 +1,257 @@
+@model SistemInformasiNilaiAkademik.ViewModels.AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard Administrator";
+}
+
+<!-- Top Section: Welcome Banner + Stats Cards -->
+<div class="row g-4 mb-4">
+    <!-- Emerald Promo Card (matches reference) -->
+    <div class="col-lg-7">
+        <div class="nev-promo-card h-100 d-flex flex-column justify-content-between">
+            <div>
+                <span class="badge mb-3 px-3 py-1" style="background: rgba(255,255,255,0.2); font-weight: 600; font-size: 0.82rem;">
+                    ADMINISTRASI SISTEM
+                </span>
+                <h3 class="fw-bold mb-2">Sistem Informasi Nilai Akademik</h3>
+                <div class="badge bg-light text-success mb-3 px-3 py-2">Semester berjalan: @Model.NamaPeriodeAktif</div>
+                <p class="text-white-50 mb-4" style="max-width: 480px; font-size: 0.95rem;">
+                    Selamat datang di panel kontrol terpusat. Kelola data master siswa, guru, rombel kelas, konfigurasi bobot penilaian, serta pantau integritas riwayat penilaian.
+                </p>
+            </div>
+            <div class="d-flex flex-wrap gap-2 pt-2">
+                <a asp-action="Siswa" class="btn btn-light fw-bold" style="border-radius: 12px; color: #005743;">
+                    Kelola Siswa
+                </a>
+                <a asp-action="Penugasan" class="btn btn-outline-light" style="border-radius: 12px;">
+                    Atur Penugasan Guru
+                </a>
+                <a asp-action="Bobot" class="btn btn-outline-light" style="border-radius: 12px;">
+                    Konfigurasi Bobot
+                </a>
+                <a asp-action="PeriodeAkademik" class="btn btn-outline-light" style="border-radius: 12px;">
+                    Atur Semester
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats Grid -->
+    <div class="col-lg-5">
+        <div class="row g-3">
+            <div class="col-6">
+                <div class="stat-widget">
+                    <div class="stat-title">Total Siswa</div>
+                    <div class="stat-value">@Model.TotalSiswa</div>
+                    <div class="stat-sub">Terdaftar di 15 Kelas</div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="stat-widget">
+                    <div class="stat-title">Total Guru</div>
+                    <div class="stat-value">@Model.TotalGuru</div>
+                    <div class="stat-sub">Umum & Kejuruan</div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="stat-widget">
+                    <div class="stat-title">Rombel Kelas</div>
+                    <div class="stat-value">@Model.TotalKelas</div>
+                    <div class="stat-sub">5 Konsentrasi Keahlian</div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="stat-widget">
+                    <div class="stat-title">Nilai Tercatat</div>
+                    <div class="stat-value">@Model.TotalNilaiTercatat</div>
+                    <div class="stat-sub">@Model.NamaPeriodeAktif</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabel ringkasan dan grafik -->
+<div class="row g-4">
+    <!-- Left: Siswa Terbaru -->
+    <div class="col-lg-7">
+        <div class="nev-card mb-4">
+            <div class="nev-card-header">
+                <div>
+                    <h5 class="nev-card-title">Siswa Terbaru</h5>
+                    <div class="text-muted small">Daftar siswa yang baru ditambahkan ke sistem</div>
+                </div>
+                <a asp-action="Siswa" class="btn-pill-action" title="Lihat Semua Siswa">&rarr;</a>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table-nev">
+                    <thead>
+                        <tr>
+                            <th>NIS / NISN</th>
+                            <th>Nama Siswa</th>
+                            <th>Kelas</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var s in Model.SiswaTerbaru)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="fw-semibold">@s.Nis</div>
+                                    <div class="text-muted small">@s.Nisn</div>
+                                </td>
+                                <td class="fw-bold">@s.NamaSiswa</td>
+                                <td>
+                                    <span class="badge" style="background-color: var(--primary-light); color: var(--primary-color);">
+                                        @s.Kelas?.NamaKelas
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge-pill-status @(s.Status == "Aktif" ? "status-aktif" : "status-nonaktif")">
+                                        @s.Status
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Audit Trail / Log Perubahan Nilai -->
+        <div class="nev-card">
+            <div class="nev-card-header">
+                <div>
+                    <h5 class="nev-card-title">Riwayat Perubahan Nilai</h5>
+                    <div class="text-muted small">Pencatatan riwayat koreksi nilai demi transparansi</div>
+                </div>
+            </div>
+
+            @if (Model.LogTerbaru.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table-nev">
+                        <thead>
+                            <tr>
+                                <th>Waktu</th>
+                                <th>Siswa / Mapel</th>
+                                <th>Koreksi</th>
+                                <th>Pengubah & Alasan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var l in Model.LogTerbaru)
+                            {
+                                <tr>
+                                    <td class="text-muted small">
+                                        @l.WaktuPerubahan.ToLocalTime().ToString("dd/MM/yy HH:mm")
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold">@l.Nilai?.Siswa?.NamaSiswa</div>
+                                        <div class="text-muted small">@l.Nilai?.Mapel?.NamaMapel</div>
+                                    </td>
+                                    <td>
+                                        <span class="text-danger text-decoration-line-through">@l.NilaiLama.ToString("0.##")</span>
+                                        &rarr;
+                                        <span class="text-success fw-bold">@l.NilaiBaru.ToString("0.##")</span>
+                                    </td>
+                                    <td>
+                                        <div class="fw-semibold">@l.Pengguna?.Nama</div>
+                                        <div class="text-muted small fst-italic">"@l.Alasan"</div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-4 text-muted">Belum ada riwayat koreksi nilai yang tercatat.</div>
+            }
+        </div>
+    </div>
+
+    <!-- Right: Donut Chart of Majors + Navigation Actions -->
+    <div class="col-lg-5">
+        <div class="nev-card mb-4 text-center">
+            <div class="nev-card-header text-start">
+                <div>
+                    <h5 class="nev-card-title">Distribusi Rombel Kejuruan</h5>
+                    <div class="text-muted small">Jumlah kelas per konsentrasi keahlian</div>
+                </div>
+            </div>
+
+            <div class="my-3 d-flex justify-content-center">
+                <canvas id="jurusanDonutChart" width="240" height="240"></canvas>
+            </div>
+
+            <div class="d-flex flex-wrap justify-content-center gap-3 mt-3">
+                @foreach (var kv in Model.DistribusiJurusan)
+                {
+                    <div class="d-flex align-items-center gap-2">
+                        <span style="width: 10px; height: 10px; border-radius: 50%; background: var(--primary-color);"></span>
+                        <span class="small fw-semibold">@kv.Key (@kv.Value Kelas)</span>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="nev-card">
+            <h5 class="nev-card-title mb-3">Tautan Cepat Master Data</h5>
+            <div class="list-group list-group-flush border-0">
+                <a asp-action="CreateSiswa" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center px-0 py-3 border-bottom">
+                    <div>
+                        <div class="fw-bold text-dark">+ Tambah Siswa Baru</div>
+                        <div class="text-muted small">Formulir pendaftaran biodata siswa</div>
+                    </div>
+                    <span class="btn-pill-action">&rarr;</span>
+                </a>
+                <a asp-action="CreateGuru" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center px-0 py-3 border-bottom">
+                    <div>
+                        <div class="fw-bold text-dark">+ Tambah Guru & Akun</div>
+                        <div class="text-muted small">Registrasi staf pengajar & akun login</div>
+                    </div>
+                    <span class="btn-pill-action">&rarr;</span>
+                </a>
+                <a asp-action="Bobot" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center px-0 py-3 border-bottom">
+                    <div>
+                        <div class="fw-bold text-dark">⚙️ Konfigurasi Bobot Penilaian</div>
+                        <div class="text-muted small">Default 30% Harian, 30% UTS, 40% UAS</div>
+                    </div>
+                    <span class="btn-pill-action">&rarr;</span>
+                </a>
+                <a asp-action="Pengguna" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center px-0 py-3">
+                    <div>
+                        <div class="fw-bold text-dark">👥 Manajemen Akun Multi-Role</div>
+                        <div class="text-muted small">Aktivasi, nonaktifkan, atau reset sandi</div>
+                    </div>
+                    <span class="btn-pill-action">&rarr;</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var dataJurusan = {
+                "TKJ": 3,
+                "MPLB": 3,
+                "AKL": 3,
+                "TE": 3
+            };
+            @if (Model.DistribusiJurusan.Any())
+            {
+                <text>
+                dataJurusan = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.DistribusiJurusan));
+                </text>
+            }
+            if (window.NevCharts) {
+                window.NevCharts.drawDonut('jurusanDonutChart', dataJurusan, "@Model.TotalKelas Kelas");
+            }
+        });
+    </script>
+}

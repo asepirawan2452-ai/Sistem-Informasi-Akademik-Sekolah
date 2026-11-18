@@ -1,0 +1,316 @@
+@model SistemInformasiNilaiAkademik.ViewModels.InputNilaiFilterViewModel
+@{
+    ViewData["Title"] = "Input Nilai Siswa";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h3 class="fw-bold mb-1">Input Nilai Siswa</h3>
+        <p class="text-muted small mb-0">Semester berjalan: <strong>@Model.NamaPeriode</strong>.</p>
+    </div>
+</div>
+
+<!-- Filter Selection Form -->
+<div class="nev-card mb-4">
+    <form method="get" asp-action="InputNilai" class="row g-3 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label-nev">Kelas / Rombel *</label>
+            <select name="idKelas" asp-items="ViewBag.KelasList" class="form-select form-select-nev" onchange="this.form.submit()">
+                <option value="">-- Pilih Kelas --</option>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label-nev">Mata Pelajaran Diampu *</label>
+            <select name="idMapel" asp-items="ViewBag.MapelList" class="form-select form-select-nev" onchange="this.form.submit()">
+                <option value="">-- Pilih Mata Pelajaran --</option>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label-nev">Komponen Penilaian *</label>
+            <select name="idKomponen" asp-items="ViewBag.KomponenList" class="form-select form-select-nev" onchange="this.form.submit()">
+                <option value="">-- Pilih Komponen --</option>
+            </select>
+        </div>
+
+        <div class="col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-nev-search w-100">Tampilkan Siswa</button>
+        </div>
+    </form>
+</div>
+
+@if (Model.IdKelas > 0 && Model.IdMapel > 0 && Model.IdKomponen > 0)
+{
+    <!-- Sub-Navigasi Pemilihan Tugas Harian (Tugas 1, 2, 3...) -->
+    @if (Model.NamaKomponen == "Harian")
+    {
+        <div class="nev-card mb-4 p-3 bg-light border">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <span class="fw-bold small text-muted text-uppercase me-2">Pilih Tugas Harian:</span>
+                    @foreach (var task in Model.DaftarTugasAda)
+                    {
+                        <a asp-action="InputNilai" 
+                           asp-route-idKelas="@Model.IdKelas" 
+                           asp-route-idMapel="@Model.IdMapel" 
+                           asp-route-idKomponen="@Model.IdKomponen" 
+                           asp-route-idPeriode="@Model.IdPeriode" 
+                           asp-route-namaTugas="@task"
+                           class="btn btn-sm @(Model.NamaTugas == task ? "btn-nev-primary" : "btn-nev-outline")" 
+                           style="border-radius: 20px;">
+                            📝 @task
+                        </a>
+                    }
+                </div>
+
+                <div class="d-flex gap-2">
+                    <!-- Tombol Tambah Tugas Baru -->
+                    <button type="button" class="btn btn-sm btn-nev-success" data-bs-toggle="modal" data-bs-target="#modalTambahTugas">
+                        + Tambah Tugas Baru
+                    </button>
+
+                    <!-- Tombol Hapus Tugas Aktif jika ada lebih dari 1 -->
+                    @if (Model.DaftarTugasAda.Count > 1)
+                    {
+                        <form asp-action="HapusTugas" method="post" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus @Model.NamaTugas beserta seluruh nilai siswa di dalamnya?');">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="idKelas" value="@Model.IdKelas" />
+                            <input type="hidden" name="idMapel" value="@Model.IdMapel" />
+                            <input type="hidden" name="idPeriode" value="@Model.IdPeriode" />
+                            <input type="hidden" name="idKomponen" value="@Model.IdKomponen" />
+                            <input type="hidden" name="namaTugas" value="@Model.NamaTugas" />
+                            <button type="submit" class="btn btn-sm btn-nev-danger">
+                                Hapus @Model.NamaTugas
+                            </button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Lembar Input Nilai -->
+    <div class="nev-card mb-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 pb-3 border-bottom gap-2">
+            <div>
+                <h5 class="fw-bold mb-0">
+                    Lembar Penilaian: @Model.NamaMapel
+                    @if (Model.NamaKomponen == "Harian")
+                    {
+                        <span class="badge" style="background-color: var(--primary-color); font-size: 0.9rem;">@Model.NamaTugas</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-primary">@Model.NamaKomponen</span>
+                    }
+                </h5>
+                <div class="text-muted small mt-1">
+                    Kelas: <strong>@Model.NamaKelas</strong> &bull; Periode: @Model.NamaPeriode
+                </div>
+            </div>
+            <div>
+                <span class="badge-pill-status status-aktif">Validasi Rentang Aktif (0–100)</span>
+            </div>
+        </div>
+
+        <form asp-action="SimpanNilai" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="IdKelas" />
+            <input type="hidden" asp-for="IdMapel" />
+            <input type="hidden" asp-for="IdKomponen" />
+            <input type="hidden" asp-for="IdPeriode" />
+            <input type="hidden" asp-for="NamaTugas" />
+
+            <div class="table-responsive">
+                <table class="table-nev">
+                    <thead>
+                        <tr>
+                            <th style="width: 60px;">No</th>
+                            <th style="width: 140px;">NIS</th>
+                            <th>Nama Siswa</th>
+                            <th style="width: 200px;">Nilai @Model.NamaTugas (0–100)</th>
+                            <th style="width: 140px;">Status</th>
+                            <th class="text-end" style="width: 120px;">Aksi Koreksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{ int no = 1; }
+                        @foreach (var item in Model.SiswaNilaiList)
+                        {
+                            <tr>
+                                <td>@(no++)</td>
+                                <td class="fw-semibold">@item.Nis</td>
+                                <td class="fw-bold">@item.NamaSiswa</td>
+                                <td>
+                                    <div class="input-group">
+                                        <input type="number" 
+                                               name="nilaiInputs[@item.IdSiswa]" 
+                                               value="@(item.NilaiAngka.HasValue ? item.NilaiAngka.Value.ToString("0.##") : "")" 
+                                               step="0.01" 
+                                               min="0" 
+                                               max="100" 
+                                               class="form-control form-control-nev nilai-field" 
+                                               placeholder="0 - 100" />
+                                    </div>
+                                </td>
+                                <td>
+                                    @if (item.NilaiAngka.HasValue)
+                                    {
+                                        <span class="badge-pill-status status-aktif">Tersimpan</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-light text-muted border">Belum dinilai</span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    @if (item.IdNilai.HasValue)
+                                    {
+                                        <a asp-action="KoreksiNilai" asp-route-id="@item.IdNilai.Value" class="btn btn-sm btn-nev-edit py-1 px-2" title="Koreksi nilai dengan catatan audit">
+                                            Koreksi
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">-</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                        @if (!Model.SiswaNilaiList.Any())
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center py-4 text-muted">
+                                    Belum ada siswa terdaftar pada kelas ini.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            @if (Model.SiswaNilaiList.Any())
+            {
+                <div class="mt-4 pt-3 border-top d-flex justify-content-between align-items-center">
+                    <div class="text-muted small">
+                        * Menyimpan nilai akan memperbarui rata-rata harian dan nilai akhir secara otomatis.
+                    </div>
+                    <button type="submit" class="btn btn-nev-primary px-4 py-2">
+                        Simpan Nilai @Model.NamaTugas
+                    </button>
+                </div>
+            }
+        </form>
+    </div>
+
+    <!-- Ringkasan Matriks Seluruh Tugas Harian -->
+    @if (Model.NamaKomponen == "Harian" && Model.RingkasanTugasHarian.Any())
+    {
+        <div class="nev-card">
+            <div class="nev-card-header">
+                <div>
+                    <h5 class="nev-card-title">Matriks Seluruh Tugas Harian & Rata-rata</h5>
+                    <div class="text-muted small">Rekapitulasi akumulasi tugas 1, 2, 3... yang membentuk nilai harian siswa</div>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table-nev table-bordered">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">No</th>
+                            <th>NIS</th>
+                            <th>Nama Siswa</th>
+                            @foreach (var task in Model.DaftarTugasAda)
+                            {
+                                <th class="text-center">@task</th>
+                            }
+                            <th class="text-center" style="background-color: var(--primary-light); color: var(--primary-color);">Rata-rata Harian</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{ int rNo = 1; }
+                        @foreach (var r in Model.RingkasanTugasHarian)
+                        {
+                            <tr>
+                                <td>@(rNo++)</td>
+                                <td class="fw-semibold">@r.Nis</td>
+                                <td class="fw-bold">@r.NamaSiswa</td>
+                                @foreach (var task in Model.DaftarTugasAda)
+                                {
+                                    decimal val;
+                                    bool hasVal = r.NilaiPerTugas.TryGetValue(task, out val);
+                                    <td class="text-center">
+                                        @(hasVal ? val.ToString("0.##") : "-")
+                                    </td>
+                                }
+                                <td class="text-center fw-bold fs-6" style="background-color: #f0fdf4; color: var(--primary-color);">
+                                    @r.RataRataHarian.ToString("0.##")
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="nev-card text-center py-5">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">📝</div>
+        <h5 class="fw-bold mb-1">Silakan Pilih Kelas, Mata Pelajaran, dan Komponen</h5>
+        <p class="text-muted small">Pilih filter di atas untuk memuat daftar siswa dan lembar penginputan nilai.</p>
+    </div>
+}
+
+<!-- Modal Tambah Tugas Baru -->
+<div class="modal fade" id="modalTambahTugas" tabindex="-1" aria-labelledby="modalTugasLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius: 16px;">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="modalTugasLabel">Tambah Tugas Harian Baru</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="get" asp-action="InputNilai">
+                <input type="hidden" name="idKelas" value="@Model.IdKelas" />
+                <input type="hidden" name="idMapel" value="@Model.IdMapel" />
+                <input type="hidden" name="idKomponen" value="@Model.IdKomponen" />
+                <input type="hidden" name="idPeriode" value="@Model.IdPeriode" />
+
+                <div class="modal-body py-3">
+                    <p class="text-muted small">
+                        Masukkan nama atau nomor penugasan harian baru (misal: <code>Tugas @(Model.DaftarTugasAda.Count + 1)</code>, <code>Kuis 1</code>, atau <code>Praktik 1</code>).
+                    </p>
+                    <div class="mb-3">
+                        <label class="form-label-nev">Nama / Judul Tugas</label>
+                        <input type="text" name="tugasBaru" class="form-control form-control-nev" value="Tugas @(Model.DaftarTugasAda.Count + 1)" required />
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-nev-outline" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-nev-primary">Lanjutkan & Input Nilai</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.querySelectorAll('.nilai-field').forEach(function(input) {
+            input.addEventListener('input', function() {
+                var val = parseFloat(this.value);
+                if (val < 0 || val > 100) {
+                    this.style.borderColor = '#ef4444';
+                    this.style.backgroundColor = '#fef2f2';
+                } else {
+                    this.style.borderColor = '';
+                    this.style.backgroundColor = '';
+                }
+            });
+        });
+    </script>
+}

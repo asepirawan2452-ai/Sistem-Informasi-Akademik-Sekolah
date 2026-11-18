@@ -1,0 +1,90 @@
+@model SistemInformasiNilaiAkademik.ViewModels.SiswaFormViewModel
+@{
+    ViewData["Title"] = "Tambah Siswa";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="nev-card">
+            <div class="nev-card-header">
+                <div>
+                    <h4 class="nev-card-title">Tambah Siswa Baru</h4>
+                    <div class="text-muted small">Lengkapi formulir untuk mendaftarkan peserta didik</div>
+                </div>
+                <a asp-action="Siswa" class="btn btn-sm btn-nev-outline">&larr; Kembali</a>
+            </div>
+
+            <form asp-action="CreateSiswa" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="alert alert-nev alert-nev-danger"></div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="Nis" class="form-label-nev">Nomor Induk Siswa (NIS) *</label>
+                        <input asp-for="Nis" class="form-control form-control-nev" placeholder="Contoh: 2025001" required />
+                        <span asp-validation-for="Nis" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Nisn" class="form-label-nev">NISN *</label>
+                        <input asp-for="Nisn" class="form-control form-control-nev" placeholder="Contoh: 0081000001" required />
+                        <span asp-validation-for="Nisn" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-8">
+                        <label asp-for="NamaSiswa" class="form-label-nev">Nama Lengkap Siswa *</label>
+                        <input asp-for="NamaSiswa" class="form-control form-control-nev" placeholder="Masukkan nama lengkap siswa" required />
+                        <span asp-validation-for="NamaSiswa" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="JenisKelamin" class="form-label-nev">Jenis Kelamin *</label>
+                        <select asp-for="JenisKelamin" class="form-select form-select-nev">
+                            <option value="L">Laki-Laki (L)</option>
+                            <option value="P">Perempuan (P)</option>
+                        </select>
+                        <span asp-validation-for="JenisKelamin" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="IdKelas" class="form-label-nev">Kelas / Rombongan Belajar *</label>
+                        <select asp-for="IdKelas" asp-items="Model.KelasList" class="form-select form-select-nev" required>
+                            <option value="">-- Pilih Kelas --</option>
+                        </select>
+                        <span asp-validation-for="IdKelas" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="TanggalLahir" class="form-label-nev">Tanggal Lahir *</label>
+                        <input asp-for="TanggalLahir" type="date" class="form-control form-control-nev" required />
+                        <span asp-validation-for="TanggalLahir" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-12">
+                        <label asp-for="Alamat" class="form-label-nev">Alamat Tempat Tinggal</label>
+                        <textarea asp-for="Alamat" class="form-control form-control-nev" rows="2" placeholder="Masukkan alamat domisili siswa"></textarea>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Status" class="form-label-nev">Status Siswa</label>
+                        <select asp-for="Status" class="form-select form-select-nev">
+                            <option value="Aktif">Aktif</option>
+                            <option value="Nonaktif">Nonaktif</option>
+                            <option value="Lulus">Lulus</option>
+                            <option value="Pindah">Pindah</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12 mt-4 pt-2 border-top d-flex justify-content-end gap-2">
+                        <a asp-action="Siswa" class="btn btn-nev-outline">Batal</a>
+                        <button type="submit" class="btn btn-nev-primary">Simpan Siswa</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

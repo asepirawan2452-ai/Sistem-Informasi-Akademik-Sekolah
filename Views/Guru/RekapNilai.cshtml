@@ -1,0 +1,159 @@
+@{
+    ViewData["Title"] = "Rekapitulasi Nilai Mata Pelajaran";
+    var siswaList = ViewBag.SiswaList as List<SistemInformasiNilaiAkademik.Models.Siswa> ?? new();
+    var nilaiRecords = ViewBag.NilaiRecords as List<SistemInformasiNilaiAkademik.Models.Nilai> ?? new();
+    var rekapRecords = ViewBag.RekapRecords as List<SistemInformasiNilaiAkademik.Models.RekapNilai> ?? new();
+    var daftarNamaTugas = ViewBag.DaftarNamaTugas as List<string> ?? new();
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h3 class="fw-bold mb-1">Rekap Nilai Mata Pelajaran</h3>
+        <p class="text-muted small mb-0">Semester: <strong>@ViewBag.NamaPeriodeAktif</strong> &bull; Rincian tugas harian, UTS, UAS, pembobotan nilai akhir, dan konversi predikat.</p>
+    </div>
+</div>
+
+<div class="nev-card mb-4">
+    <form method="get" asp-action="RekapNilai" class="row g-3 align-items-end">
+        <div class="col-md-5">
+            <label class="form-label-nev">Kelas / Rombel</label>
+            <select name="idKelas" asp-items="ViewBag.KelasList" class="form-select form-select-nev" onchange="this.form.submit()">
+            </select>
+        </div>
+        <div class="col-md-5">
+            <label class="form-label-nev">Mata Pelajaran</label>
+            <select name="idMapel" asp-items="ViewBag.MapelList" class="form-select form-select-nev" onchange="this.form.submit()">
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-nev-search w-100">Tampilkan</button>
+        </div>
+    </form>
+</div>
+
+<div class="nev-card">
+    <div class="table-responsive">
+        <table class="table-nev table-bordered">
+            <thead>
+                <tr>
+                    <th rowspan="2" class="align-middle text-center" style="width: 40px;">No</th>
+                    <th rowspan="2" class="align-middle">NIS</th>
+                    <th rowspan="2" class="align-middle" style="min-width: 160px;">Nama Siswa</th>
+                    @if (daftarNamaTugas.Any())
+                    {
+                        <th colspan="@daftarNamaTugas.Count" class="text-center bg-light">Rincian Tugas Harian</th>
+                    }
+                    <th rowspan="2" class="align-middle text-center" style="background-color: var(--primary-light); color: var(--primary-color);">Rerata Harian (30%)</th>
+                    <th rowspan="2" class="align-middle text-center">UTS (30%)</th>
+                    <th rowspan="2" class="align-middle text-center">UAS (40%)</th>
+                    <th rowspan="2" class="align-middle text-center">Nilai Akhir</th>
+                    <th rowspan="2" class="align-middle text-center">Predikat</th>
+                    <th rowspan="2" class="align-middle">Status</th>
+                </tr>
+                @if (daftarNamaTugas.Any())
+                {
+                    <tr>
+                        @foreach (var task in daftarNamaTugas)
+                        {
+                            <th class="text-center small py-1">@task</th>
+                        }
+                    </tr>
+                }
+            </thead>
+            <tbody>
+                @{ int no = 1; }
+                @foreach (var s in siswaList)
+                {
+                    var harianRecords = nilaiRecords.Where(n => n.IdSiswa == s.IdSiswa && n.KomponenNilai?.NamaKomponen == "Harian").ToList();
+                    decimal? harianAvg = harianRecords.Any() ? Math.Round(harianRecords.Average(x => x.NilaiAngka), 2) : (decimal?)null;
+                    var uts = nilaiRecords.FirstOrDefault(n => n.IdSiswa == s.IdSiswa && n.KomponenNilai?.NamaKomponen == "UTS")?.NilaiAngka;
+                    var uas = nilaiRecords.FirstOrDefault(n => n.IdSiswa == s.IdSiswa && n.KomponenNilai?.NamaKomponen == "UAS")?.NilaiAngka;
+                    var rekap = rekapRecords.FirstOrDefault(r => r.IdSiswa == s.IdSiswa);
+
+                    <tr>
+                        <td class="text-center">@(no++)</td>
+                        <td class="fw-semibold">@s.Nis</td>
+                        <td class="fw-bold">@s.NamaSiswa</td>
+
+                        <!-- Rincian Tugas Harian Dinamis -->
+                        @foreach (var task in daftarNamaTugas)
+                        {
+                            var tVal = harianRecords.FirstOrDefault(x => x.NamaTugas == task)?.NilaiAngka;
+                            <td class="text-center small">
+                                @(tVal.HasValue ? tVal.Value.ToString("0.##") : "-")
+                            </td>
+                        }
+
+                        <!-- Rerata Harian -->
+                        <td class="text-center fw-bold" style="background-color: #f0fdf4; color: var(--primary-color);">
+                            @(harianAvg.HasValue ? harianAvg.Value.ToString("0.##") : "-")
+                        </td>
+
+                        <!-- UTS -->
+                        <td class="text-center">@(uts.HasValue ? uts.Value.ToString("0.##") : "-")</td>
+
+                        <!-- UAS -->
+                        <td class="text-center">@(uas.HasValue ? uas.Value.ToString("0.##") : "-")</td>
+
+                        <!-- Nilai Akhir -->
+                        <td class="text-center">
+                            @if (rekap != null)
+                            {
+                                <span class="fw-bold fs-6">@rekap.NilaiAkhir.ToString("0.##")</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </td>
+
+                        <!-- Predikat -->
+                        <td class="text-center">
+                            @if (rekap != null)
+                            {
+                                var badgeClass = rekap.NilaiHuruf switch {
+                                    "A" => "badge-grade-a",
+                                    "B" => "badge-grade-b",
+                                    "C" => "badge-grade-c",
+                                    _ => "badge-grade-d"
+                                };
+                                <span class="@badgeClass">@rekap.NilaiHuruf</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </td>
+
+                        <!-- Status -->
+                        <td>
+                            @if (rekap != null)
+                            {
+                                if (rekap.NilaiAkhir >= 75)
+                                {
+                                    <span class="badge-pill-status status-aktif">Tuntas</span>
+                                }
+                                else
+                                {
+                                    <span class="badge-pill-status status-warning">Remidial</span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="text-muted small">Belum Lengkap</span>
+                            }
+                        </td>
+                    </tr>
+                }
+                @if (!siswaList.Any())
+                {
+                    <tr>
+                        <td colspan="@(8 + daftarNamaTugas.Count)" class="text-center py-4 text-muted">
+                            Pilih kelas dan mata pelajaran untuk melihat rekap nilai.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

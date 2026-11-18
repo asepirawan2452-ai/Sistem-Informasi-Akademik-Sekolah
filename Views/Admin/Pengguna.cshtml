@@ -1,0 +1,86 @@
+@model IEnumerable<SistemInformasiNilaiAkademik.Models.Pengguna>
+@{
+    ViewData["Title"] = "Manajemen Akun Pengguna";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h3 class="fw-bold mb-1">Manajemen Akun Pengguna</h3>
+        <p class="text-muted small mb-0">Kelola identitas, peran, status, dan akses akun pengguna.</p>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+        <a asp-action="PemulihanKataSandi" class="btn btn-nev-reset">Pemulihan Kata Sandi</a>
+        <a asp-action="CreatePengguna" class="btn btn-nev-primary">+ Tambah Akun</a>
+    </div>
+</div>
+
+<div class="nev-card">
+    <div class="table-responsive">
+        <table class="table-nev account-users-table">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Nama Lengkap</th>
+                    <th>Username</th>
+                    <th>Peran</th>
+                    <th>Status Akun</th>
+                    <th>Dibuat Pada</th>
+                    <th class="text-end">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ int no = 1; }
+                @foreach (var pengguna in Model)
+                {
+                    <tr>
+                        <td>@(no++)</td>
+                        <td class="fw-bold">@pengguna.Nama</td>
+                        <td><code>@pengguna.Username</code></td>
+                        <td>
+                            @if (pengguna.Role?.NamaRole == "Admin")
+                            {
+                                <span class="badge bg-danger">Administrator</span>
+                            }
+                            else if (pengguna.Role?.NamaRole == "WaliKelas")
+                            {
+                                <span class="badge" style="background-color: var(--primary-light); color: var(--primary-color);">Wali Kelas</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-info text-dark">Guru</span>
+                            }
+                        </td>
+                        <td>
+                            <span class="badge-pill-status @(pengguna.Status == "Aktif" ? "status-aktif" : "status-nonaktif")">
+                                @pengguna.Status
+                            </span>
+                        </td>
+                        <td class="text-muted small">@pengguna.DibuatPada.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td class="text-end">
+                            <div class="d-inline-flex flex-wrap justify-content-end gap-1">
+                                <a asp-action="EditPengguna" asp-route-id="@pengguna.IdPengguna" class="btn btn-sm btn-nev-edit py-1 px-2">Edit</a>
+                                <a asp-action="ResetPasswordPengguna" asp-route-id="@pengguna.IdPengguna" class="btn btn-sm btn-nev-reset py-1 px-2">Atur Ulang Sandi</a>
+                                <form asp-action="ToggleStatusPengguna" asp-route-id="@pengguna.IdPengguna" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm @(pengguna.Status == "Aktif" ? "btn-nev-warning" : "btn-nev-success") py-1 px-2">
+                                        @(pengguna.Status == "Aktif" ? "Nonaktifkan" : "Aktifkan")
+                                    </button>
+                                </form>
+                                <form asp-action="DeletePengguna" asp-route-id="@pengguna.IdPengguna" method="post" class="d-inline" onsubmit="return confirm('Hapus akun @pengguna.Username? Tindakan ini tidak dapat dibatalkan.');">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-nev-danger py-1 px-2">Hapus</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="7" class="text-center py-4 text-muted">Belum ada akun pengguna.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

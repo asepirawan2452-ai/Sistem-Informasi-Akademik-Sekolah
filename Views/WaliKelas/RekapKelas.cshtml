@@ -1,0 +1,90 @@
+@model SistemInformasiNilaiAkademik.ViewModels.RekapKelasViewModel
+@{
+    ViewData["Title"] = "Rekapitulasi Kelas Binaan";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h3 class="fw-bold mb-1">Rekapitulasi Nilai Kelas @Model.NamaKelas</h3>
+        <p class="text-muted small mb-0">
+            Wali Kelas: <strong>@Model.NamaWaliKelas</strong> &bull; Periode: @Model.NamaPeriode
+        </p>
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-action="GrafikKelas" class="btn btn-nev-outline">
+            Lihat Grafik
+        </a>
+    </div>
+</div>
+
+<div class="nev-card">
+    <div class="table-responsive">
+        <table class="table-nev table-bordered">
+            <thead>
+                <tr>
+                    <th style="width: 40px;">No</th>
+                    <th style="min-width: 100px;">NIS</th>
+                    <th style="min-width: 180px;">Nama Siswa</th>
+                    @foreach (var m in Model.DaftarMapel)
+                    {
+                        <th class="text-center" style="min-width: 85px;" title="@m.NamaMapel">
+                            <div>@m.KodeMapel</div>
+                        </th>
+                    }
+                    <th class="text-center" style="min-width: 80px;">Rata-rata</th>
+                    <th class="text-center" style="min-width: 70px;">Predikat</th>
+                    <th class="text-center" style="min-width: 100px;">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ int no = 1; }
+                @foreach (var s in Model.DaftarSiswa)
+                {
+                    <tr>
+                        <td>@(no++)</td>
+                        <td class="fw-semibold">@s.Nis</td>
+                        <td class="fw-bold">@s.NamaSiswa</td>
+                        @foreach (var m in Model.DaftarMapel)
+                        {
+                            var tuple = s.NilaiPerMapel.GetValueOrDefault(m.IdMapel, (0m, "-"));
+                            <td class="text-center">
+                                @if (tuple.Item2 != "-")
+                                {
+                                    <div class="fw-bold">@tuple.Item1.ToString("0.##")</div>
+                                    <span class="badge @(tuple.Item2 == "A" ? "badge-grade-a" : tuple.Item2 == "B" ? "badge-grade-b" : tuple.Item2 == "C" ? "badge-grade-c" : "badge-grade-d")" style="font-size: 0.7rem; padding: 1px 4px;">
+                                        @tuple.Item2
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small">-</span>
+                                }
+                            </td>
+                        }
+                        <td class="text-center fw-bold fs-6" style="color: var(--primary-color);">
+                            @s.RataRata.ToString("0.##")
+                        </td>
+                        <td class="text-center">
+                            <span class="badge @(s.Predikat == "A" ? "badge-grade-a" : s.Predikat == "B" ? "badge-grade-b" : s.Predikat == "C" ? "badge-grade-c" : "badge-grade-d")">
+                                @s.Predikat
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <a asp-action="CetakRapor" asp-route-idSiswa="@s.IdSiswa" class="btn btn-sm btn-nev-print py-1 px-2" title="Cetak Rapor A4">
+                                Rapor
+                            </a>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.DaftarSiswa.Any())
+                {
+                    <tr>
+                        <td colspan="@(5 + Model.DaftarMapel.Count)" class="text-center py-4 text-muted">
+                            Belum ada siswa terdaftar pada kelas ini.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

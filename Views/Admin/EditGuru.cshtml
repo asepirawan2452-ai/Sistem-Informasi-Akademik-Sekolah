@@ -1,0 +1,66 @@
+@model SistemInformasiNilaiAkademik.ViewModels.GuruFormViewModel
+@{
+    ViewData["Title"] = "Ubah Data Guru";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="nev-card">
+            <div class="nev-card-header">
+                <div>
+                    <h4 class="nev-card-title">Ubah Data Guru</h4>
+                    <div class="text-muted small">Perbarui data @Model.Nama</div>
+                </div>
+                <a asp-action="Guru" class="btn btn-sm btn-nev-outline">&larr; Kembali</a>
+            </div>
+
+            <form asp-action="EditGuru" asp-route-id="@Model.IdGuru" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="IdGuru" />
+                <input type="hidden" asp-for="IdPengguna" />
+                <div asp-validation-summary="ModelOnly" class="alert alert-nev alert-nev-danger"></div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="NipNrg" class="form-label-nev">NIP / NRG *</label>
+                        <input asp-for="NipNrg" class="form-control form-control-nev" required />
+                        <span asp-validation-for="NipNrg" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Nama" class="form-label-nev">Nama Lengkap Guru *</label>
+                        <input asp-for="Nama" class="form-control form-control-nev" required />
+                        <span asp-validation-for="Nama" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label-nev">Username Akun Terkait</label>
+                        <input value="@Model.Username" class="form-control form-control-nev" readonly disabled />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label-nev">Ubah Kata Sandi (Kosongkan jika tetap)</label>
+                        <input asp-for="Password" type="password" class="form-control form-control-nev" placeholder="Masukkan jika ingin ubah sandi" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Status" class="form-label-nev">Status Guru</label>
+                        <select asp-for="Status" class="form-select form-select-nev">
+                            <option value="Aktif">Aktif</option>
+                            <option value="Nonaktif">Nonaktif</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12 mt-4 pt-2 border-top d-flex justify-content-end gap-2">
+                        <a asp-action="Guru" class="btn btn-nev-outline">Batal</a>
+                        <button type="submit" class="btn btn-nev-primary">Perbarui Guru</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

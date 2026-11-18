@@ -1,0 +1,66 @@
+@model SistemInformasiNilaiAkademik.ViewModels.PenugasanFormViewModel
+@{
+    ViewData["Title"] = "Tambah Penugasan Mengajar";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="nev-card">
+            <div class="nev-card-header">
+                <div>
+                    <h4 class="nev-card-title">Tambah Penugasan Mengajar Guru</h4>
+                    <div class="text-muted small">Tugaskan guru untuk mengajar mata pelajaran pada kelas dan periode tertentu</div>
+                </div>
+                <a asp-action="Penugasan" class="btn btn-sm btn-nev-outline">&larr; Kembali</a>
+            </div>
+
+            <form asp-action="CreatePenugasan" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="alert alert-nev alert-nev-danger"></div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="IdGuru" class="form-label-nev">Guru Pengajar *</label>
+                        <select asp-for="IdGuru" asp-items="Model.GuruList" class="form-select form-select-nev" required>
+                            <option value="">-- Pilih Guru Pengajar --</option>
+                        </select>
+                        <span asp-validation-for="IdGuru" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="IdMapel" class="form-label-nev">Mata Pelajaran *</label>
+                        <select asp-for="IdMapel" asp-items="Model.MapelList" class="form-select form-select-nev" required>
+                            <option value="">-- Pilih Mata Pelajaran --</option>
+                        </select>
+                        <span asp-validation-for="IdMapel" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="IdKelas" class="form-label-nev">Kelas / Rombel *</label>
+                        <select asp-for="IdKelas" asp-items="Model.KelasList" class="form-select form-select-nev" required>
+                            <option value="">-- Pilih Kelas --</option>
+                        </select>
+                        <span asp-validation-for="IdKelas" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="IdPeriode" class="form-label-nev">Tahun Ajaran / Periode Akademik *</label>
+                        <select asp-for="IdPeriode" asp-items="Model.PeriodeList" class="form-select form-select-nev" required>
+                            <option value="">-- Pilih Periode --</option>
+                        </select>
+                        <span asp-validation-for="IdPeriode" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-12 mt-4 pt-2 border-top d-flex justify-content-end gap-2">
+                        <a asp-action="Penugasan" class="btn btn-nev-outline">Batal</a>
+                        <button type="submit" class="btn btn-nev-primary">Simpan Penugasan</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

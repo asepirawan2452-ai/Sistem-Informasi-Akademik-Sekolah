@@ -1,0 +1,74 @@
+@model SistemInformasiNilaiAkademik.ViewModels.MapelFormViewModel
+@{
+    ViewData["Title"] = "Tambah Mata Pelajaran";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="nev-card">
+            <div class="nev-card-header">
+                <div>
+                    <h4 class="nev-card-title">Tambah Mata Pelajaran Baru</h4>
+                    <div class="text-muted small">Muatan umum atau kejuruan sesuai kurikulum</div>
+                </div>
+                <a asp-action="Mapel" class="btn btn-sm btn-nev-outline">&larr; Kembali</a>
+            </div>
+
+            <form asp-action="CreateMapel" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="alert alert-nev alert-nev-danger"></div>
+
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label asp-for="KodeMapel" class="form-label-nev">Kode Mapel *</label>
+                        <input asp-for="KodeMapel" class="form-control form-control-nev" placeholder="Contoh: TKJ-07" required />
+                        <span asp-validation-for="KodeMapel" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-8">
+                        <label asp-for="NamaMapel" class="form-label-nev">Nama Mata Pelajaran *</label>
+                        <input asp-for="NamaMapel" class="form-control form-control-nev" placeholder="Contoh: Cloud Computing" required />
+                        <span asp-validation-for="NamaMapel" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Kelompok" class="form-label-nev">Kelompok Kurikulum *</label>
+                        <select asp-for="Kelompok" class="form-select form-select-nev" id="selectKelompok">
+                            <option value="Muatan Umum">Muatan Umum</option>
+                            <option value="Kejuruan">Kejuruan</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6" id="divJurusan">
+                        <label asp-for="IdJurusan" class="form-label-nev">Konsentrasi Keahlian (Untuk Kejuruan)</label>
+                        <select asp-for="IdJurusan" asp-items="Model.JurusanList" class="form-select form-select-nev">
+                            <option value="">-- Pilih Jurusan / Keahlian --</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12">
+                        <label asp-for="Deskripsi" class="form-label-nev">Deskripsi / Capaian Pembelajaran</label>
+                        <textarea asp-for="Deskripsi" class="form-control form-control-nev" rows="2" placeholder="Deskripsi ringkas mata pelajaran"></textarea>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Status" class="form-label-nev">Status Mata Pelajaran</label>
+                        <select asp-for="Status" class="form-select form-select-nev">
+                            <option value="Aktif">Aktif</option>
+                            <option value="Nonaktif">Nonaktif</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12 mt-4 pt-2 border-top d-flex justify-content-end gap-2">
+                        <a asp-action="Mapel" class="btn btn-nev-outline">Batal</a>
+                        <button type="submit" class="btn btn-nev-primary">Simpan Mata Pelajaran</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

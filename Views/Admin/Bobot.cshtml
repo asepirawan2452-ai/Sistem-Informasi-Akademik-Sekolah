@@ -1,0 +1,71 @@
+@model IEnumerable<SistemInformasiNilaiAkademik.ViewModels.BobotMapelViewModel>
+@{
+    ViewData["Title"] = "Konfigurasi Bobot Penilaian";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h3 class="fw-bold mb-1">Konfigurasi Bobot Penilaian</h3>
+        <p class="text-muted small mb-0">Atur proporsi persentase Nilai Harian, UTS, dan UAS. Total bobot setiap mata pelajaran wajib tepat 100%.</p>
+    </div>
+</div>
+
+<div class="nev-card">
+    <div class="alert alert-nev alert-nev-success mb-3">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <div>
+            <strong>Rumus Perhitungan Nilai Akhir:</strong>
+            <code>Nilai Akhir = (Harian &times; BobotHarian%) + (UTS &times; BobotUTS%) + (UAS &times; BobotUAS%)</code>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table-nev">
+            <thead>
+                <tr>
+                    <th>Kode Mapel</th>
+                    <th>Nama Mata Pelajaran</th>
+                    <th class="text-center">Bobot Harian</th>
+                    <th class="text-center">Bobot UTS</th>
+                    <th class="text-center">Bobot UAS</th>
+                    <th class="text-center">Total Bobot</th>
+                    <th class="text-end">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    decimal total = item.BobotHarian + item.BobotUTS + item.BobotUAS;
+                    <tr>
+                        <td class="fw-bold">@item.KodeMapel</td>
+                        <td class="fw-semibold">@item.NamaMapel</td>
+                        <td class="text-center">
+                            <span class="badge bg-light text-dark border">@item.BobotHarian.ToString("0.##")%</span>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-light text-dark border">@item.BobotUTS.ToString("0.##")%</span>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-light text-dark border">@item.BobotUAS.ToString("0.##")%</span>
+                        </td>
+                        <td class="text-center">
+                            @if (total == 100m)
+                            {
+                                <span class="badge-pill-status status-aktif">100% Tepat</span>
+                            }
+                            else
+                            {
+                                <span class="badge-pill-status status-nonaktif">@total% (Tidak Valid)</span>
+                            }
+                        </td>
+                        <td class="text-end">
+                            <a asp-action="EditBobot" asp-route-idMapel="@item.IdMapel" class="btn btn-sm btn-nev-settings py-1 px-3">
+                                Ubah Bobot
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

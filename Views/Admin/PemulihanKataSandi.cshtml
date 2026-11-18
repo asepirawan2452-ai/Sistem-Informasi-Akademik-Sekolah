@@ -1,0 +1,48 @@
+@model IEnumerable<SistemInformasiNilaiAkademik.Models.Pengguna>
+@{
+    ViewData["Title"] = "Pemulihan Kata Sandi";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h3 class="fw-bold mb-1">Pemulihan Kata Sandi</h3>
+        <p class="text-muted small mb-0">Pilih akun untuk menetapkan kata sandi baru secara aman.</p>
+    </div>
+    <a asp-action="Pengguna" class="btn btn-nev-outline">&larr; Kembali ke Akun</a>
+</div>
+
+<div class="nev-card">
+    <div class="table-responsive">
+        <table class="table-nev">
+            <thead>
+                <tr>
+                    <th>Nama Lengkap</th>
+                    <th>Username</th>
+                    <th>Peran</th>
+                    <th>Status</th>
+                    <th class="text-end">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var pengguna in Model)
+                {
+                    <tr>
+                        <td class="fw-bold">@pengguna.Nama</td>
+                        <td><code>@pengguna.Username</code></td>
+                        <td>@(pengguna.Role?.NamaRole == "WaliKelas" ? "Wali Kelas" : pengguna.Role?.NamaRole == "Admin" ? "Administrator" : "Guru")</td>
+                        <td>
+                            <span class="badge-pill-status @(pengguna.Status == "Aktif" ? "status-aktif" : "status-nonaktif")">@pengguna.Status</span>
+                        </td>
+                        <td class="text-end">
+                            <a asp-action="ResetPasswordPengguna" asp-route-id="@pengguna.IdPengguna" class="btn btn-sm btn-nev-reset">Pilih Akun</a>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="5" class="text-center py-4 text-muted">Belum ada akun pengguna.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,86 @@
+@model IEnumerable<SistemInformasiNilaiAkademik.Models.Guru>
+@{
+    ViewData["Title"] = "Master Data Guru";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h3 class="fw-bold mb-1">Data Guru</h3>
+        <p class="text-muted small mb-0">Kelola staf pengajar, NIP/NRG, akun pengguna terkait, dan tugas wali kelas.</p>
+    </div>
+    <a asp-action="CreateGuru" class="btn btn-nev-primary">
+        + Tambah Guru
+    </a>
+</div>
+
+<div class="nev-card">
+    <form method="get" asp-action="Guru" class="row g-2 mb-4">
+        <div class="col-md-9">
+            <input type="text" name="search" value="@ViewBag.Search" class="form-control form-control-nev" placeholder="Cari nama guru atau NIP/NRG..." />
+        </div>
+        <div class="col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-nev-search w-100">Cari</button>
+            <a asp-action="Guru" class="btn btn-nev-outline">Reset</a>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table-nev">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>NIP / NRG</th>
+                    <th>Nama Guru</th>
+                    <th>Username Akun</th>
+                    <th>Wali Kelas</th>
+                    <th>Beban Mengajar</th>
+                    <th>Status</th>
+                    <th class="text-end">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ int no = 1; }
+                @foreach (var g in Model)
+                {
+                    <tr>
+                        <td>@(no++)</td>
+                        <td class="fw-semibold">@g.NipNrg</td>
+                        <td class="fw-bold">@g.Nama</td>
+                        <td>
+                            <code>@g.Pengguna?.Username</code>
+                        </td>
+                        <td>
+                            @if (g.KelasWali != null)
+                            {
+                                <span class="badge" style="background-color: var(--primary-light); color: var(--primary-color);">
+                                    Wali @g.KelasWali.NamaKelas
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="text-muted small">-</span>
+                            }
+                        </td>
+                        <td>
+                            <span class="small text-muted">@g.PenugasanList.Count Penugasan</span>
+                        </td>
+                        <td>
+                            <span class="badge-pill-status @(g.Status == "Aktif" ? "status-aktif" : "status-nonaktif")">
+                                @g.Status
+                            </span>
+                        </td>
+                        <td class="text-end">
+                            <div class="d-inline-flex gap-1">
+                                <a asp-action="EditGuru" asp-route-id="@g.IdGuru" class="btn btn-sm btn-nev-edit py-1 px-2">Edit</a>
+                                <form asp-action="DeleteGuru" asp-route-id="@g.IdGuru" method="post" class="d-inline" onsubmit="return confirm('Hapus guru @g.Nama?');">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-nev-danger py-1 px-2">Hapus</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

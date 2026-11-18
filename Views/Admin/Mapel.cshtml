@@ -1,0 +1,86 @@
+@model IEnumerable<SistemInformasiNilaiAkademik.Models.Mapel>
+@{
+    ViewData["Title"] = "Master Mata Pelajaran";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h3 class="fw-bold mb-1">Mata Pelajaran</h3>
+        <p class="text-muted small mb-0">Kelola kurikulum muatan umum dan konsentrasi kejuruan SMK.</p>
+    </div>
+    <a asp-action="CreateMapel" class="btn btn-nev-primary">
+        + Tambah Mata Pelajaran
+    </a>
+</div>
+
+<div class="nev-card">
+    <form method="get" asp-action="Mapel" class="row g-2 mb-4">
+        <div class="col-md-6">
+            <input type="text" name="search" value="@ViewBag.Search" class="form-control form-control-nev" placeholder="Cari nama mapel atau kode..." />
+        </div>
+        <div class="col-md-3">
+            <select name="kelompok" class="form-select form-select-nev">
+                <option value="">-- Semua Kelompok --</option>
+                <option value="Muatan Umum" selected="@(ViewBag.Kelompok == "Muatan Umum")">Muatan Umum</option>
+                <option value="Kejuruan" selected="@(ViewBag.Kelompok == "Kejuruan")">Kejuruan</option>
+            </select>
+        </div>
+        <div class="col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-nev-search w-100">Filter</button>
+            <a asp-action="Mapel" class="btn btn-nev-outline">Reset</a>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table-nev">
+            <thead>
+                <tr>
+                    <th>Kode Mapel</th>
+                    <th>Nama Mata Pelajaran</th>
+                    <th>Kelompok</th>
+                    <th>Konsentrasi Keahlian</th>
+                    <th>Status</th>
+                    <th class="text-end">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var m in Model)
+                {
+                    <tr>
+                        <td class="fw-bold">
+                            <span class="badge" style="background-color: #f1f5f9; color: var(--dark-slate); font-size: 0.82rem;">
+                                @m.KodeMapel
+                            </span>
+                        </td>
+                        <td class="fw-semibold">@m.NamaMapel</td>
+                        <td>
+                            <span class="badge" style="background-color: @(m.Kelompok == "Kejuruan" ? "#e0f2fe; color: #0369a1" : "var(--primary-light); color: var(--primary-color)")">
+                                @m.Kelompok
+                            </span>
+                        </td>
+                        <td>
+                            @(m.Jurusan != null ? $"{m.Jurusan.Nama} ({m.Jurusan.Kode})" : "Semua Jurusan (Umum)")
+                        </td>
+                        <td>
+                            <span class="badge-pill-status @(m.Status == "Aktif" ? "status-aktif" : "status-nonaktif")">
+                                @m.Status
+                            </span>
+                        </td>
+                        <td class="text-end">
+                            <div class="d-inline-flex gap-1">
+                                <a asp-action="EditBobot" asp-route-idMapel="@m.IdMapel" class="btn btn-sm btn-nev-settings py-1 px-2" title="Atur Bobot Penilaian">
+                                    Bobot
+                                </a>
+                                <a asp-action="EditMapel" asp-route-id="@m.IdMapel" class="btn btn-sm btn-nev-edit py-1 px-2">Edit</a>
+                                <form asp-action="DeleteMapel" asp-route-id="@m.IdMapel" method="post" class="d-inline" onsubmit="return confirm('Hapus mapel @m.NamaMapel?');">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-nev-danger py-1 px-2">Hapus</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

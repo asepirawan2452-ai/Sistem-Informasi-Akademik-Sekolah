@@ -1,0 +1,66 @@
+@model SistemInformasiNilaiAkademik.ViewModels.PenggunaFormViewModel
+@{
+    ViewData["Title"] = "Edit Akun Pengguna";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="nev-card">
+            <div class="nev-card-header">
+                <div>
+                    <h4 class="nev-card-title">Edit Akun Pengguna</h4>
+                    <div class="text-muted small">Perbarui identitas, peran, dan status akses akun.</div>
+                </div>
+                <a asp-action="Pengguna" class="btn btn-sm btn-nev-outline">&larr; Kembali</a>
+            </div>
+
+            <form asp-action="EditPengguna" asp-route-id="@Model.IdPengguna" method="post">
+                @Html.AntiForgeryToken()
+                <input asp-for="IdPengguna" type="hidden" />
+                <div asp-validation-summary="ModelOnly" class="alert alert-nev alert-nev-danger"></div>
+
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label asp-for="Nama" class="form-label-nev">Nama Lengkap *</label>
+                        <input asp-for="Nama" class="form-control form-control-nev" required />
+                        <span asp-validation-for="Nama" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Username" class="form-label-nev">Username *</label>
+                        <input asp-for="Username" class="form-control form-control-nev" required autocomplete="username" />
+                        <span asp-validation-for="Username" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="NipNrg" class="form-label-nev">NIP/NRG</label>
+                        <input asp-for="NipNrg" class="form-control form-control-nev" placeholder="Wajib untuk Guru atau Wali Kelas" />
+                        <span asp-validation-for="NipNrg" class="text-danger small"></span>
+                        <div class="form-text">Diperlukan ketika peran akun adalah Guru atau Wali Kelas.</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="IdRole" class="form-label-nev">Peran *</label>
+                        <select asp-for="IdRole" asp-items="Model.RoleList" class="form-select form-select-nev" required>
+                            <option value="">-- Pilih Peran --</option>
+                        </select>
+                        <span asp-validation-for="IdRole" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Status" class="form-label-nev">Status Akun</label>
+                        <select asp-for="Status" class="form-select form-select-nev">
+                            <option value="Aktif">Aktif</option>
+                            <option value="Nonaktif">Nonaktif</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12 mt-4 pt-2 border-top d-flex justify-content-end gap-2">
+                        <a asp-action="Pengguna" class="btn btn-nev-outline">Batal</a>
+                        <button type="submit" class="btn btn-nev-primary">Simpan Perubahan</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
